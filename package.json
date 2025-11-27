@@ -1,0 +1,32 @@
+{
+  "name": "fs9-docthru-team32-fe",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "^5.90.11",
+    "clsx": "^2.1.1",
+    "next": "16.0.5",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "react-hook-form": "^7.66.1"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3.3.1",
+    "@tailwindcss/postcss": "^4",
+    "@tanstack/react-query-devtools": "^5.91.1",
+    "babel-plugin-react-compiler": "1.0.0",
+    "eslint": "^9",
+    "eslint-config-next": "16.0.5",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-tailwindcss": "^3.18.2",
+    "prettier": "^3.7.0",
+    "prettier-plugin-tailwindcss": "^0.7.1",
+    "tailwindcss": "^4"
+  }
+}
