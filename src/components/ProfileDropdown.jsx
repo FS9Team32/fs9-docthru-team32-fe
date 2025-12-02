@@ -58,7 +58,7 @@ export default function ProfileDropdown() {
           <div className="flex items-center gap-3 border-b border-gray-100 px-5 py-4">
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-yellow-100 text-xl">
               <Image
-                src="/member.png"
+                src={Member}
                 alt="Profile"
                 width={32}
                 height={32}
