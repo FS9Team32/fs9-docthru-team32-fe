@@ -65,7 +65,7 @@ export default function ProfileDropdown() {
               />
             </div>
             <div className="flex flex-col">
-              <span className="text-sm font-bold text-gray-900">닉네임</span>
+              <span className="     text-gray-900">닉네임</span>
               <span className="text-xs text-gray-500">유저 등급</span>
             </div>
           </div>
@@ -74,13 +74,13 @@ export default function ProfileDropdown() {
           <div className="py-2">
             <button
               //onClick={() => handleNavigation('/my')}
-              className="block w-full px-5 py-3 text-left text-sm text-gray-700 hover:bg-gray-50"
+              className="block w-full px-5 py-3 text-left   text-gray-700 hover:bg-gray-50"
             >
               나의 챌린지
             </button>
             <button
               //onClick={handleLogout}
-              className="block w-full px-5 py-3 text-left text-sm text-gray-400 hover:bg-gray-50"
+              className="block w-full px-5 py-3 text-left   text-gray-400 hover:bg-gray-50"
             >
               로그아웃
             </button>

@@ -36,18 +36,18 @@ export default function CommentDropdown(
   return (
     <div className="relative" ref={dropdownRef}>
       <button onClick={handleToggleDropdown}>
-        <p className="text-2xl font-bold text-gray-400">︙</p>
+        <p className="   text-gray-400">︙</p>
       </button>
       {dropdownOpen && (
         <div className="absolute right-0 z-10 mt-2 w-28 rounded-md border bg-white shadow-lg">
           <button
-            className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-100"
+            className="block w-full px-4 py-2 text-left   hover:bg-gray-100"
             onClick={handleEdit}
           >
             수정하기
           </button>
           <button
-            className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-100"
+            className="block w-full px-4 py-2 text-left   hover:bg-gray-100"
             onClick={handleDelete}
           >
             삭제하기

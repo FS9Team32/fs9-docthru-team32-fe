@@ -22,7 +22,7 @@ export default function Button({
 }) {
   // 1. 공통 스타일
   const baseStyles =
-    'inline-flex items-center justify-center rounded-lg font-bold focus:outline-none disabled:opacity-50 disabled:pointer-events-none';
+    'inline-flex items-center justify-center rounded-lg    focus:outline-none disabled:opacity-50 disabled:pointer-events-none';
 
   // 2. 종류별 스타일
   const variants = {

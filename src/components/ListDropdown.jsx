@@ -56,7 +56,7 @@ export default function ListDropdown() {
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className={`flex w-full items-center justify-between rounded-lg border bg-white px-4 py-2.5 text-sm font-medium ${isOpen ? 'border-purple-500 text-purple-600 ring-1 ring-purple-500' : 'border-gray-200 text-gray-700 hover:bg-gray-50'}`}
+        className={`flex w-full items-center justify-between rounded-lg border bg-white px-4 py-2.5 ${isOpen ? 'border-purple-500 text-purple-600 ring-1 ring-purple-500' : 'border-gray-200 text-gray-700 hover:bg-gray-50'}`}
       >
         <span>{currentLabel}</span>
         <svg
@@ -77,13 +77,13 @@ export default function ListDropdown() {
       {/* 드롭다운 패널 */}
       {isOpen && (
         <div className="ring-opacity-5 absolute left-0 z-50 mt-2 w-full rounded-lg bg-white shadow-xl ring-1 ring-black">
-          <ul className="py-2 text-sm text-gray-700">
+          <ul className="py-2   text-gray-700">
             {/* 1. 상태 필터 영역 */}
             {FILTER_OPTIONS.map((option) => (
               <li key={option.value}>
                 <button
                   onClick={() => handleSelect('filter', option.value)}
-                  className={`w-full px-4 py-2.5 text-left hover:bg-gray-50 ${selectedFilter === option.value ? 'bg-purple-50 font-bold text-purple-600' : 'text-gray-500'}`}
+                  className={`w-full px-4 py-2.5 text-left hover:bg-gray-50 ${selectedFilter === option.value ? 'bg-purple-50    text-purple-600' : 'text-gray-500'}`}
                 >
                   {option.label}
                 </button>
@@ -97,7 +97,7 @@ export default function ListDropdown() {
               <li key={option.value}>
                 <button
                   onClick={() => handleSelect('sort', option.value)}
-                  className={`w-full px-4 py-2.5 text-left hover:bg-gray-50 ${selectedSort === option.value ? 'bg-purple-50 font-bold text-purple-600' : 'text-gray-500'}`}
+                  className={`w-full px-4 py-2.5 text-left hover:bg-gray-50 ${selectedSort === option.value ? 'bg-purple-50    text-purple-600' : 'text-gray-500'}`}
                 >
                   {option.label}
                 </button>
