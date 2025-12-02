@@ -1,12 +1,13 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+// import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import Member from '@/assets/member.png';
 export default function ProfileDropdown() {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
-  const router = useRouter();
+  //  const router = useRouter();
 
   // 외부 클릭 시 닫기
   useEffect(() => {
@@ -42,7 +43,7 @@ export default function ProfileDropdown() {
         className="flex h-8 w-8 items-center justify-center rounded-full"
       >
         <Image
-          src="/member.png"
+          src={Member}
           alt="Profile"
           width={32}
           height={32}
