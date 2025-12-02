@@ -16,7 +16,7 @@ const CATEGORY_TEXT = {
   reject: '신청 거절',
   delete: '첼린지 삭제',
 };
-export const CATEGORY_COLORS = {
+const CATEGORY_COLORS = {
   wait: 'bg-[#FFFDE7] text-[#F2BC00]',
   reject: 'bg-[#FFF0F0] text-[#E54946]',
   accept: 'bg-[#DFF0FF] text-[#4095DE]',
@@ -43,6 +43,3 @@ export default function StatusChip({
     </button>
   );
 }
-
-StatusChip.type = CATEGORY_COLORS;
-StatusChip.text = CATEGORY_TEXT;
