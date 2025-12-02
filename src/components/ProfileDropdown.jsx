@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 // import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import Member from '@/assets/member.png';
+import memberImg from '@/assets/member.png';
 export default function ProfileDropdown() {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -43,7 +43,7 @@ export default function ProfileDropdown() {
         className="flex h-8 w-8 items-center justify-center rounded-full"
       >
         <Image
-          src={Member}
+          src={memberImg}
           alt="Profile"
           width={32}
           height={32}
@@ -58,7 +58,7 @@ export default function ProfileDropdown() {
           <div className="flex items-center gap-3 border-b border-gray-100 px-5 py-4">
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-yellow-100 text-xl">
               <Image
-                src={Member}
+                src={memberImg}
                 alt="Profile"
                 width={32}
                 height={32}
