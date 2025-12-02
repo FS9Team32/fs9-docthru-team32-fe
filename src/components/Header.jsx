@@ -65,6 +65,7 @@ const Header = () => {
 
           {viewType === 'admin' && (
             <nav className="hidden md:flex items-center gap-0">
+              {/*TODO: 파일명에 맞게 경로 수정  */}
               <Link
                 href="/challenge"
                 className={`${baseTab} ${
@@ -73,7 +74,7 @@ const Header = () => {
               >
                 챌린지 관리
               </Link>
-
+              {/*TODO: 파일명에 맞게 경로 수정  */}
               <Link
                 href="/list"
                 className={`${baseTab} ${
