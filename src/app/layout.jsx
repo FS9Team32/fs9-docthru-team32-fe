@@ -1,6 +1,9 @@
 import './globals.css';
 import localFont from 'next/font/local';
 import { ModalProvider } from '@/providers/ModalProvider';
+import { AuthProvider } from '@/providers/AuthProvider';
+import './globals.css';
+import localFont from 'next/font/local';
 
 export const metadata = {
   title: '독스루',
@@ -17,6 +20,7 @@ export default function RootLayout({ children }) {
     <html lang="ko-kr">
       <body className={`${pretendard.className} antialiased`}>
         <ModalProvider>{children}</ModalProvider>
+        <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
   );

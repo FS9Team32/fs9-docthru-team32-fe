@@ -28,6 +28,8 @@ export default function Page() {
       placeholder: '테스트 메시지를 입력해주세요',
     });
   };
+export default function Page() {
+  // 모달 컴포넌트가 없으므로 CommentDropdown을 사용하여 간단한 액션 드롭다운을 대신 보여줍니다.
 
   return (
     <div className="flex min-h-screen flex-col gap-10 bg-gray-500 p-10">
