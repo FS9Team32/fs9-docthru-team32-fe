@@ -7,32 +7,13 @@ import { useAuth } from '@/providers/AuthProvider';
 
 import imgLogo from '@/assets/logo-main.svg';
 import icBell from '@/assets/icon_bell.svg';
-import icExit from '@/assets/icon_exit.svg';
 
 import ProfileDropdownForHeader from '@/components/ProfileDropdownForHeader';
-
-const TempButton = ({ children, onClick = () => {}, className }) => (
-  <button
-    type="button"
-    onClick={onClick}
-    className={`flex h-10 items-center justify-center gap-1.5 rounded-xl px-4 text-[14px] font-bold transition-colors ${className}`}
-  >
-    {children}
-  </button>
-);
 
 const Header = () => {
   const { user, logout } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
-
-  const isEditorPage =
-    pathname.startsWith('/challenge/write') ||
-    pathname.startsWith('/challenge/edit');
-
-  let viewType = 'default';
-  if (isEditorPage) viewType = 'editor';
-  else if (user?.role === 'ADMIN') viewType = 'admin';
 
   const handleLogout = () => {
     logout();
@@ -44,13 +25,11 @@ const Header = () => {
   const activeTab = 'text-[#262626]';
   const inactiveTab = 'text-[#8E8E8E] hover:text-[#1A1A1A]';
 
+  const isAdmin = user?.role === 'ADMIN';
+
   return (
     <header className="sticky top-0 z-50 w-full border-b border-gray-100 bg-white">
-      <div
-        className={`flex h-[60px] w-full mx-auto items-center justify-between px-4 sm:px-8
-          ${viewType === 'editor' ? 'max-w-4xl' : 'max-w-7xl'}
-        `}
-      >
+      <div className="flex h-[60px] w-full max-w-7xl mx-auto items-center justify-between px-4 sm:px-8">
         <div className="flex items-center gap-4 md:gap-12">
           <Link href="/">
             <Image
@@ -63,9 +42,8 @@ const Header = () => {
             />
           </Link>
 
-          {viewType === 'admin' && (
+          {isAdmin && (
             <nav className="hidden md:flex items-center gap-0">
-              {/*TODO: 파일명에 맞게 경로 수정  */}
               <Link
                 href="/challenge"
                 className={`${baseTab} ${
@@ -74,7 +52,7 @@ const Header = () => {
               >
                 챌린지 관리
               </Link>
-              {/*TODO: 파일명에 맞게 경로 수정  */}
+
               <Link
                 href="/list"
                 className={`${baseTab} ${
@@ -88,25 +66,9 @@ const Header = () => {
         </div>
 
         <div className="flex items-center gap-2 md:gap-4">
-          {viewType === 'editor' ? (
-            <div className="flex items-center gap-2">
-              {/*TODO: 여기서 버튼 수정 하시면 됩니다  */}
-              <TempButton className="bg-red-50 text-red-500 hover:bg-red-100">
-                <span>포기</span>
-                <Image src={icExit} alt="" width={14} height={14} />
-              </TempButton>
-
-              <TempButton className="border border-gray-300 bg-white text-gray-700 hover:bg-gray-50">
-                임시저장
-              </TempButton>
-
-              <TempButton className="bg-brand-black text-white hover:bg-black">
-                제출하기
-              </TempButton>
-            </div>
-          ) : user ? (
+          {user ? (
             <>
-              {viewType === 'default' && (
+              {!isAdmin && (
                 <button className="rounded-full p-1 hover:bg-gray-100">
                   <Image src={icBell} alt="알림" width={24} height={24} />
                 </button>
@@ -116,7 +78,7 @@ const Header = () => {
                 nickname={user.nickname}
                 role={user.role}
                 onLogout={handleLogout}
-                hideMyChallenge={user.role === 'ADMIN'}
+                hideMyChallenge={isAdmin}
               />
             </>
           ) : (

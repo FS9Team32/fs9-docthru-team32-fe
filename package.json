@@ -37,7 +37,6 @@
     "eslint": "^9",
     "eslint-config-next": "16.0.5",
     "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-tailwindcss": "^3.18.2",
     "husky": "^9.1.7",
     "lint-staged": "^16.2.7",
     "prettier": "^3.7.0",
