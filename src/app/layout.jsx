@@ -1,3 +1,6 @@
+import './globals.css';
+import localFont from 'next/font/local';
+import { ModalProvider } from '@/providers/ModalProvider';
 import { AuthProvider } from '@/providers/AuthProvider';
 import './globals.css';
 import localFont from 'next/font/local';
@@ -16,6 +19,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="ko-kr">
       <body className={`${pretendard.className} antialiased`}>
+        <ModalProvider>{children}</ModalProvider>
         <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
