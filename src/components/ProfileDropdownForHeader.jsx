@@ -6,6 +6,12 @@ import Image from 'next/image';
 import memberImg from '@/assets/member.png';
 import adminImg from '@/assets/admin.svg';
 
+const ROLE_LABELS = {
+  ADMIN: '어드민',
+  PRO: '전문가',
+  NORMAL: '일반 회원',
+};
+
 export default function ProfileDropdownForHeader({
   nickname,
   role,
@@ -53,11 +59,13 @@ export default function ProfileDropdownForHeader({
               className="rounded-full"
             />
             <div className="flex flex-col">
-              <span className="text-[14px] font-medium text-gray-800">
+              <span className="text-[14px] font-medium text-gray-500">
                 {nickname}
               </span>
-              <span className="text-xs text-gray-500">
-                {role === 'ADMIN' ? '어드민' : '전문가'}
+              <span
+                className={`text-[14px] ${role === 'PRO' ? 'font-medium' : 'text-gray-500'}`}
+              >
+                {ROLE_LABELS[role] || '회원'}
               </span>
             </div>
           </div>
@@ -82,7 +90,7 @@ export default function ProfileDropdownForHeader({
                 setIsOpen(false);
                 onLogout();
               }}
-              className="block w-full px-5 py-3 text-[16px] text-gray-400 text-left hover:bg-gray-50 hover:text-red-500"
+              className="block w-full px-5 py-3 text-[16px]  font-medium text-gray-400 text-left hover:bg-gray-50 hover:text-red-500"
             >
               로그아웃
             </button>
