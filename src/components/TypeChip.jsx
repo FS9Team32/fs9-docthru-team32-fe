@@ -12,7 +12,7 @@ const CATEGORY_TEXT = {
 export const CATEGORY_COLORS = {
   Next: 'bg-[#79e16a]',
   API: 'bg-[#FF905E]',
-  Carrer: 'bg-[#7EB2EE]',
+  Career: 'bg-[#7EB2EE]',
   Modern: 'bg-[#F66E6B]',
   Web: 'bg-[#F7EA5D]',
 };
