@@ -1,9 +1,5 @@
 'use client';
 
 export default function AuthLayout({ children }) {
-  return (
-    <div className="flex min-h-screen items-center justify-center">
-      {children}
-    </div>
-  );
+  return <div className="min-h-screen w-full">{children}</div>;
 }
