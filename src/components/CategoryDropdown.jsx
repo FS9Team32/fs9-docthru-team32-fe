@@ -1,23 +1,28 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import { cn } from '@/lib/util';
 
-const CATEGORIES = ['Next.js', 'API', 'Career', 'Modern JS', 'Web'];
-
-export default function CategoryDropdown() {
+export default function CategoryDropdown({
+  category = [],
+  value,
+  onChange,
+  placeholder = '카테고리',
+  className,
+  ...props
+}) {
   const [isOpen, setIsOpen] = useState(false);
-  const [selected, setSelected] = useState('');
   const dropdownRef = useRef(null);
 
   const handleSelect = (category) => {
-    // 카테고리 선택 시
-    setSelected(category);
+    if (onChange) {
+      onChange(category);
+    }
     setIsOpen(false);
   };
 
   useEffect(() => {
     function handleClickOutside(event) {
-      // 외부 클릭시 닫힘
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsOpen(false);
       }
@@ -26,40 +31,70 @@ export default function CategoryDropdown() {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  });
+  }, []);
   return (
-    <div className="relative w-full max-w-md" ref={dropdownRef}>
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="flex w-full items-center justify-between rounded-lg border border-gray-200 bg-white p-4 text-left shadow-sm hover:border-gray-300 focus:border-transparent focus:ring-2 focus:ring-purple-500 focus:outline-none"
-      >
-        <span className={selected ? ' text-gray-900' : 'text-gray-400'}>
-          {selected || '카테고리'}
-        </span>
-        <svg
-          className={`h-5 w-5 text-gray-400 ${isOpen ? 'rotate-180' : ''}`}
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            d="M19 9l-7 7-7-7"
-          />
-        </svg>
-      </button>
+    <div className={cn('relative w-full', className)} ref={dropdownRef}>
+      <div className="relative">
+        <input
+          {...props}
+          type="text"
+          readOnly
+          value={value || ''}
+          placeholder={placeholder}
+          onClick={() => setIsOpen(!isOpen)}
+          className={cn(
+            'w-full cursor-pointer rounded-lg border bg-white p-4 pr-10 text-left shadow-sm outline-none transition-all caret-transparent',
+            'text-gray-900 placeholder:text-gray-400',
+            isOpen
+              ? 'border-purple-500 ring-2 ring-purple-500'
+              : 'border-gray-200 hover:border-gray-300',
+          )}
+        />
+        <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+          {isOpen ? (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+            >
+              <path
+                d="M11.4372 8.55699C11.749 8.24845 12.251 8.24845 12.5628 8.55699L16.6794 12.6314C17.1874 13.1342 16.8314 14 16.1166 14H7.88336C7.16865 14 6.81262 13.1342 7.3206 12.6314L11.4372 8.55699Z"
+                fill="#262626"
+              />
+            </svg>
+          ) : (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+            >
+              <path
+                d="M11.4372 15.443C11.749 15.7516 12.251 15.7516 12.5628 15.443L16.6794 11.3686C17.1874 10.8658 16.8314 10 16.1166 10H7.88336C7.16865 10 6.81262 10.8658 7.3206 11.3686L11.4372 15.443Z"
+                fill="#262626"
+              />
+            </svg>
+          )}
+        </div>
+      </div>
 
-      {/* 리스트 목록 */}
       {isOpen && (
-        <div className="absolute z-10 mt-2 w-full overflow-hidden rounded-lg border border-gray-100 bg-white shadow-lg">
-          <ul className="divide-y divide-gray-100">
-            {CATEGORIES.map((category) => (
+        <div className="absolute z-50 mt-2 w-full overflow-hidden rounded-lg border border-gray-100 bg-white shadow-lg ring-1 ring-black">
+          <ul className="divide-y divide-gray-100 max-h-60 overflow-y-auto">
+            {category.map((category) => (
               <li key={category}>
                 <button
+                  type="button"
                   onClick={() => handleSelect(category)}
-                  className={`w-full py-4 text-center hover:bg-gray-50 ${selected === category ? 'bg-purple-50    text-purple-600' : 'text-gray-600'}`}
+                  className={cn(
+                    'w-full py-4 text-center transition-colors hover:bg-gray-50',
+                    value === category
+                      ? 'bg-purple-50 text-purple-600 font-bold'
+                      : 'text-gray-600',
+                  )}
                 >
                   {category}
                 </button>
