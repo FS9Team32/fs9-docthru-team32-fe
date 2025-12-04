@@ -1,6 +1,9 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import Image from 'next/image';
+import arrowDown from '@/assets/arrowDown.png';
+import arrowUp from '@/assets/arrowUp.png';
 
 // figma 버전에서 필터,정렬 구분 전체보기,삭제 추가
 // 필터 및 정렬 옵션 데이터
@@ -63,31 +66,21 @@ export default function ListDropdown({
       >
         <span>{currentLabel}</span>
         {isOpen ? (
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-          >
-            <path
-              d="M11.4372 8.55699C11.749 8.24845 12.251 8.24845 12.5628 8.55699L16.6794 12.6314C17.1874 13.1342 16.8314 14 16.1166 14H7.88336C7.16865 14 6.81262 13.1342 7.3206 12.6314L11.4372 8.55699Z"
-              fill="#262626"
-            />
-          </svg>
+          <Image
+            src={arrowUp}
+            alt="arrowUp"
+            width={24}
+            height={24}
+            className="ml-2"
+          />
         ) : (
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-          >
-            <path
-              d="M11.4372 15.443C11.749 15.7516 12.251 15.7516 12.5628 15.443L16.6794 11.3686C17.1874 10.8658 16.8314 10 16.1166 10H7.88336C7.16865 10 6.81262 10.8658 7.3206 11.3686L11.4372 15.443Z"
-              fill="#262626"
-            />
-          </svg>
+          <Image
+            src={arrowDown}
+            alt="arrowDown"
+            width={24}
+            height={24}
+            className="ml-2"
+          />
         )}
       </button>
 
