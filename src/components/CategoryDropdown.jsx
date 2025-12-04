@@ -1,23 +1,31 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import Image from 'next/image';
+import arrowDown from '@/assets/arrowDown.png';
+import arrowUp from '@/assets/arrowUp.png';
+import { cn } from '@/lib/util';
 
-const CATEGORIES = ['Next.js', 'API', 'Career', 'Modern JS', 'Web'];
-
-export default function CategoryDropdown() {
+export default function CategoryDropdown({
+  category = [],
+  value,
+  onChange,
+  placeholder = '카테고리',
+  className,
+  ...props
+}) {
   const [isOpen, setIsOpen] = useState(false);
-  const [selected, setSelected] = useState('');
   const dropdownRef = useRef(null);
 
   const handleSelect = (category) => {
-    // 카테고리 선택 시
-    setSelected(category);
+    if (onChange) {
+      onChange(category);
+    }
     setIsOpen(false);
   };
 
   useEffect(() => {
     function handleClickOutside(event) {
-      // 외부 클릭시 닫힘
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsOpen(false);
       }
@@ -26,40 +34,48 @@ export default function CategoryDropdown() {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  });
+  }, []);
   return (
-    <div className="relative w-full max-w-md" ref={dropdownRef}>
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="flex w-full items-center justify-between rounded-lg border border-gray-200 bg-white p-4 text-left shadow-sm hover:border-gray-300 focus:border-transparent focus:ring-2 focus:ring-purple-500 focus:outline-none"
-      >
-        <span className={selected ? ' text-gray-900' : 'text-gray-400'}>
-          {selected || '카테고리'}
-        </span>
-        <svg
-          className={`h-5 w-5 text-gray-400 ${isOpen ? 'rotate-180' : ''}`}
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            d="M19 9l-7 7-7-7"
-          />
-        </svg>
-      </button>
+    <div className={cn('relative w-full', className)} ref={dropdownRef}>
+      <div className="relative">
+        <input
+          {...props}
+          type="text"
+          readOnly
+          value={value || ''}
+          placeholder={placeholder}
+          onClick={() => setIsOpen(!isOpen)}
+          className={cn(
+            'w-full cursor-pointer rounded-lg border bg-white p-4 pr-10 text-left shadow-sm outline-none transition-all caret-transparent',
+            'text-gray-900 placeholder:text-gray-400',
+            isOpen
+              ? 'border-purple-500 ring-2 ring-purple-500'
+              : 'border-gray-200 hover:border-gray-300',
+          )}
+        />
+        <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+          {isOpen ? (
+            <Image src={arrowUp} alt="arrow" width={24} height={24} />
+          ) : (
+            <Image src={arrowDown} alt="arrow" width={24} height={24} />
+          )}
+        </div>
+      </div>
 
-      {/* 리스트 목록 */}
       {isOpen && (
-        <div className="absolute z-10 mt-2 w-full overflow-hidden rounded-lg border border-gray-100 bg-white shadow-lg">
-          <ul className="divide-y divide-gray-100">
-            {CATEGORIES.map((category) => (
+        <div className="absolute z-50 mt-2 w-full overflow-hidden rounded-lg border border-gray-100 bg-white shadow-lg ring-1 ring-black">
+          <ul className="divide-y divide-gray-100 max-h-60 overflow-y-auto">
+            {category.map((category) => (
               <li key={category}>
                 <button
+                  type="button"
                   onClick={() => handleSelect(category)}
-                  className={`w-full py-4 text-center hover:bg-gray-50 ${selected === category ? 'bg-purple-50    text-purple-600' : 'text-gray-600'}`}
+                  className={cn(
+                    'w-full py-4 text-center transition-colors hover:bg-gray-50',
+                    value === category
+                      ? 'bg-purple-50 text-purple-600 font-bold'
+                      : 'text-gray-600',
+                  )}
                 >
                   {category}
                 </button>
