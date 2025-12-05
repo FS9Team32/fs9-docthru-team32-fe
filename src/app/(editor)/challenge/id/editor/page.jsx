@@ -1,19 +1,24 @@
 'use client';
 
 import { useState } from 'react';
-import { InputBox } from './components/inputBox';
+import RichEditor from './_component/richEditor';
 
-export default function ChallengeCreate() {
-  const [translation, setTranslation] = useState('');
+export default function ChallengeEditor() {
+  const [content, setContent] = useState(' ');
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log(content);
+  };
 
   return (
-    <div>
-      <InputBox
-        placeholder="번역 내용을 적어주세요"
-        className="h-71"
-        value={description}
-        onChange={(e) => setTranslation(e.target.value)}
-      ></InputBox>
+    <div className="w-full h-full flex flex-col bg-white rounded-lg  p-4 overflow-hidden ">
+      <form
+        onSubmit={handleSubmit}
+        className="w-full h-full flex flex-col bg-white rounded-lg p-4 overflow-hidden "
+      >
+        <RichEditor content={content} onChange={setContent} />
+      </form>
     </div>
   );
 }

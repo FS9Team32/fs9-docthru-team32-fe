@@ -116,9 +116,8 @@ export default function Toolbar({ editor }) {
       <button
         onClick={handleButtonClick}
         className={btnClass(editor.isActive('highlight'))}
-        title="배경색(형광펜)"
+        title="형광펜"
       >
-        {/* 아이콘 색상을 선택된 배경색으로 */}
         <Highlighter
           size={18}
           style={{
