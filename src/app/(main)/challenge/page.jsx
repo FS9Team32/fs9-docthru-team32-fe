@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import ChallengeCardList from './components/ChallengeCardList';
+import ChallengeCardList from './_components/ChallengeCardList';
 import iconPlus from '@/assets/icon_plus.svg';
 
 export default function ChallengePage() {
@@ -16,7 +16,7 @@ export default function ChallengePage() {
           <h1 className="text-xl font-semibold leading-none text-gray-900">
             챌린지 목록
           </h1>
-          <Link href="/challenge/createChallenge">
+          <Link href="/challenge/create">
             <button
               className="flex h-[39px] w-[154px] items-center justify-center gap-1 rounded-[19.5px] text-white"
               style={{ backgroundColor: '#262626' }}
