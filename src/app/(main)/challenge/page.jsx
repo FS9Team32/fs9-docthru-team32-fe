@@ -6,6 +6,7 @@ import Link from 'next/link';
 import ChallengeCardList from './_components/ChallengeCardList';
 import FilterBar from './_components/FilterBar';
 import SearchBar from './_components/SearchBar';
+import Pagination from './_components/Pagination';
 import iconPlus from '@/assets/icon_plus.svg';
 
 // 필터 테스트용 임시 mock 데이터
@@ -49,6 +50,7 @@ export default function ChallengePage() {
     status: '',
   });
   const [searchKeyword, setSearchKeyword] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
 
   const filteredChallenges = useMemo(() => {
     let result = [...mockChallenges];
@@ -96,8 +98,20 @@ export default function ChallengePage() {
 
   const handleSearch = (keyword) => {
     setSearchKeyword(keyword);
+    setCurrentPage(1);
     console.log('검색어:', keyword);
   };
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    console.log('페이지 변경:', page);
+  };
+
+  const itemsPerPage = 5;
+  const totalPages = Math.ceil(filteredChallenges.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedChallenges = filteredChallenges.slice(startIndex, endIndex);
 
   return (
     <div
@@ -135,7 +149,16 @@ export default function ChallengePage() {
             <SearchBar onSearch={handleSearch} />
           </div>
         )}
-        <ChallengeCardList challenges={filteredChallenges} />
+        <ChallengeCardList challenges={paginatedChallenges} />
+        {filteredChallenges.length > 0 && totalPages > 1 && (
+          <div className="mt-8 flex justify-center">
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+            />
+          </div>
+        )}
       </div>
     </div>
   );
