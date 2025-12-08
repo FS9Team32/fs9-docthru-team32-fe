@@ -3,25 +3,28 @@
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import AuthForm from '@/components/auth/AuthForm';
-import { useAuth } from '@/providers/AuthProvider';
 import bigLogo from '@/assets/big_logo.svg';
-import { loginService } from '@/lib/services/authService';
+import { authService } from '@/lib/services/authService';
+import { useAuth } from '@/providers/AuthProvider';
 
 export default function LoginPage() {
   const router = useRouter();
   const { login } = useAuth();
 
-  const handleLogin = async (data) => {
-    const result = await loginService(data);
+  const handleLogin = async ({ email, password }) => {
+    try {
+      const res = await authService.login({ email, password });
 
-    if (result.emailError || result.passwordError) {
-      return result;
+      login({
+        user: res,
+        accessToken: res.accessToken,
+      });
+
+      router.push('/');
+      return { success: true };
+    } catch (err) {
+      return { passwordError: '이메일 또는 비밀번호가 올바르지 않습니다.' };
     }
-
-    login(result.user);
-    router.push('/');
-
-    return { success: true };
   };
 
   return (
