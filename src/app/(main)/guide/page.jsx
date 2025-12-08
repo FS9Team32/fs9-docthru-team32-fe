@@ -85,6 +85,16 @@ export default function GuidePage() {
             error={methods.formState.errors.content?.message}
           />
         </section>
+
+        <section className="pt-4">
+          <button
+            type="submit"
+            className="w-full py-3 rounded-lg bg-black text-white font-semibold text-center hover:bg-gray-800 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
+            disabled={!methods.formState.isValid}
+          >
+            신청하기
+          </button>
+        </section>
       </form>
     </FormProvider>
   );
