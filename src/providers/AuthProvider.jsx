@@ -11,33 +11,27 @@ export function AuthProvider({ children }) {
   const router = useRouter();
 
   useEffect(() => {
-    const initialize = async () => {
-      if (typeof window !== 'undefined') {
-        const stored = localStorage.getItem('user');
-        if (stored) {
-          try {
-            setUser(JSON.parse(stored));
-          } catch (err) {
-            console.error('Failed to restore user:', err);
-            localStorage.removeItem('user');
-          }
-        }
+    const restoreUser = () => {
+      const storedUser = localStorage.getItem('user');
+      if (storedUser) {
+        setUser(JSON.parse(storedUser));
       }
-
       setIsLoading(false);
     };
 
-    initialize();
+    setTimeout(restoreUser, 0);
   }, []);
 
-  const login = (userData) => {
-    setUser(userData);
-    localStorage.setItem('user', JSON.stringify(userData));
+  const login = ({ user, accessToken }) => {
+    localStorage.setItem('user', JSON.stringify(user));
+    localStorage.setItem('accessToken', accessToken);
+    setUser(user);
   };
 
   const logout = () => {
-    setUser(null);
     localStorage.removeItem('user');
+    localStorage.removeItem('accessToken');
+    setUser(null);
     router.push('/login');
   };
 
@@ -48,8 +42,4 @@ export function AuthProvider({ children }) {
   );
 }
 
-export function useAuth() {
-  const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error('useAuth must be used within an AuthProvider');
-  return ctx;
-}
+export const useAuth = () => useContext(AuthContext);
