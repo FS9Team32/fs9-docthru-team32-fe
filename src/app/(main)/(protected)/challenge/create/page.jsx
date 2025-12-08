@@ -44,7 +44,7 @@ const validateUrlExists = async (url) => {
 
     clearTimeout(timeoutId);
 
-    if (response.ok || (response.status >= 200 && response.status < 400)) {
+    if (response.status >= 200 && response.status < 400) {
       return true;
     }
 
@@ -57,6 +57,32 @@ const validateUrlExists = async (url) => {
     if (error.name === 'AbortError') {
       return '링크 확인 시간이 초과되었습니다.';
     }
+
+    const errorString = String(error).toLowerCase();
+    const errorMessage = error.message?.toLowerCase() || '';
+
+    if (
+      errorMessage.includes('err_name_not_resolved') ||
+      errorString.includes('err_name_not_resolved') ||
+      errorMessage.includes('getaddrinfo') ||
+      errorMessage.includes('enotfound') ||
+      errorMessage.includes('name resolution')
+    ) {
+      return '링크에 접근할 수 없습니다. 링크가 올바른지 확인해주세요.';
+    }
+
+    if (
+      errorMessage.includes('cors') ||
+      errorMessage.includes('err_failed') ||
+      errorMessage.includes('networkerror')
+    ) {
+      return true;
+    }
+
+    if (errorMessage.includes('failed to fetch')) {
+      return '링크에 접근할 수 없습니다. 링크가 올바른지 확인해주세요.';
+    }
+    return true;
   }
 };
 
