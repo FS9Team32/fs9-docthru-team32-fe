@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import RichEditor from './_component/RichEditor';
 import LoadAlert from './_component/LoadAlert';
@@ -44,6 +44,7 @@ const fetchChallengeInfo = async (id) => {
 
 export default function ChallengeEditor() {
   const params = useParams();
+  const router = useRouter();
   const challengeId = params?.id;
 
   const [originalLink, setOriginalLink] = useState('');
@@ -130,20 +131,56 @@ export default function ChallengeEditor() {
     }
   };
 
-  const handleSubmit = () => {
-    if (!content) {
+  const handleSubmit = async () => {
+    if (!content || content === '<p></p>') {
       alert('내용을 입력해주세요.');
       return;
     }
-    // 차후 제출하기 구현
-    localStorage.removeItem(STORAGE_KEY);
-    window.location.href = '/challenge';
+
+    try {
+      const token = localStorage.getItem('accessToken');
+
+      if (!token) {
+        alert('로그인이 필요합니다.');
+        router.push('/login');
+        return;
+      }
+
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/challenges/${challengeId}/works`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            content: content,
+          }),
+        },
+      );
+
+      const data = await response.json();
+      if (response.ok) {
+        localStorage.removeItem(STORAGE_KEY);
+
+        alert('성공적으로 제출되었습니다! 🎉');
+
+        router.push(`/challenge/${challengeId}`);
+      } else {
+        alert(data.message || '제출에 실패했습니다.');
+      }
+    } catch (error) {
+      console.error('Submit Error:', error);
+      alert('서버와 통신 중 오류가 발생했습니다.');
+    }
   };
 
   const handleCancel = () => {
     if (confirm('작성을 취소하시겠습니까?')) {
       setContent('');
-      window.location.href = '/challenge';
+
+      router.push(`/challenge/${challengeId}`);
     }
   };
 
