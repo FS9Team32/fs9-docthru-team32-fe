@@ -1,6 +1,7 @@
 'use client';
 import Modal from '@/components/modal/Modal';
 import { X } from 'lucide-react';
+import Button from '@/components/Button';
 export default function DraftListModal({
   isOpen,
   onClose,
@@ -13,12 +14,14 @@ export default function DraftListModal({
       <div className="bg-white rounded-lg shadow-xl w-[400px] max-h-[600px] flex flex-col overflow-hidden">
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
           <h2 className="text-lg font-bold text-gray-900">임시저장 글</h2>
-          <button
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={onClose}
-            className="text-gray-400 text-3xl hover:text-gray-600"
+            className="rounded-full"
           >
             <X size={20} />
-          </button>
+          </Button>
         </div>
 
         <div className="px-6 py-3 text-sm text-gray-500 bg-gray-50 border-b border-gray-100">

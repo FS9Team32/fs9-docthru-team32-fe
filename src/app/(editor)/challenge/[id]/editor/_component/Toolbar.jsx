@@ -12,6 +12,7 @@ import {
   ListOrdered,
   Highlighter,
 } from 'lucide-react';
+import Button from '@/components/Button';
 
 export default function Toolbar({ editor }) {
   const colorInputRef = useRef(null);
@@ -48,72 +49,90 @@ export default function Toolbar({ editor }) {
 
   return (
     <div className="flex items-center gap-1 border-b p-2 bg-white sticky top-0 z-10">
-      <button
+      <Button
+        variant="ghost"
+        size="icon"
         onClick={toggleBold}
         className={btnClass(editor.isActive('bold'))}
         title="굵게"
       >
         <Bold size={18} />
-      </button>
-      <button
+      </Button>
+      <Button
+        variant="ghost"
+        size="icon"
         onClick={toggleItalic}
         className={btnClass(editor.isActive('italic'))}
         title="기울임"
       >
         <Italic size={18} />
-      </button>
-      <button
+      </Button>
+      <Button
+        variant="ghost"
+        size="icon"
         onClick={toggleUnderline}
         className={btnClass(editor.isActive('underline'))}
         title="밑줄"
       >
         <Underline size={18} />
-      </button>
+      </Button>
 
       <div className="w-px h-5 bg-gray-300 mx-2"></div>
 
-      <button
+      <Button
+        variant="ghost"
+        size="icon"
         onClick={toggleAlignLeft}
         className={btnClass(editor.isActive({ textAlign: 'left' }))}
         title="왼쪽 정렬"
       >
         <AlignLeft size={18} />
-      </button>
-      <button
+      </Button>
+      <Button
+        variant="ghost"
+        size="icon"
         onClick={toggleAlignCenter}
         className={btnClass(editor.isActive({ textAlign: 'center' }))}
         title="가운데 정렬"
       >
         <AlignCenter size={18} />
-      </button>
-      <button
+      </Button>
+      <Button
+        variant="ghost"
+        size="icon"
         onClick={toggleAlignRight}
         className={btnClass(editor.isActive({ textAlign: 'right' }))}
         title="오른쪽 정렬"
       >
         <AlignRight size={18} />
-      </button>
+      </Button>
 
       <div className="w-px h-5 bg-gray-300 mx-2"></div>
 
-      <button
+      <Button
+        variant="ghost"
+        size="icon"
         onClick={toggleBulletList}
         className={btnClass(editor.isActive('bulletList'))}
         title="글머리 기호"
       >
         <List size={18} />
-      </button>
-      <button
+      </Button>
+      <Button
+        variant="ghost"
+        size="icon"
         onClick={toggleOrderedList}
         className={btnClass(editor.isActive('orderedList'))}
         title="번호 매기기"
       >
         <ListOrdered size={18} />
-      </button>
+      </Button>
 
       <div className="w-px h-5 bg-gray-300 mx-2"></div>
 
-      <button
+      <Button
+        variant="ghost"
+        size="icon"
         onClick={handleButtonClick}
         className={btnClass(editor.isActive('highlight'))}
         title="형광펜"
@@ -126,7 +145,7 @@ export default function Toolbar({ editor }) {
               : 'inherit',
           }}
         />
-      </button>
+      </Button>
 
       <input
         type="color"
