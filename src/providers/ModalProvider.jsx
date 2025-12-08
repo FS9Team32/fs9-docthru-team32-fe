@@ -1,22 +1,18 @@
 'use client';
 
 import { createContext, useContext, useState, useCallback } from 'react';
-import Modal from '@/components/modal/Modal';
 
 const ModalContext = createContext(null);
 
 export function ModalProvider({ children }) {
-  const [isOpen, setIsOpen] = useState(false);
   const [content, setContent] = useState(null);
 
   const openModal = useCallback((Component, props = {}) => {
     setContent(() => <Component {...props} />);
-    setIsOpen(true);
   }, []);
 
   const closeModal = useCallback(() => {
-    setIsOpen(false);
-    setTimeout(() => setContent(null), 200);
+    setContent(null);
   }, []);
 
   const value = {
@@ -27,9 +23,22 @@ export function ModalProvider({ children }) {
   return (
     <ModalContext.Provider value={value}>
       {children}
-      <Modal isOpen={isOpen} onClose={closeModal}>
-        {content}
-      </Modal>
+      {content && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center"
+          role="dialog"
+          aria-modal="true"
+        >
+          <div
+            className="absolute inset-0 bg-black/50"
+            onClick={closeModal}
+            aria-hidden="true"
+          />
+          <div className="relative z-10" onClick={(e) => e.stopPropagation()}>
+            {content}
+          </div>
+        </div>
+      )}
     </ModalContext.Provider>
   );
 }
