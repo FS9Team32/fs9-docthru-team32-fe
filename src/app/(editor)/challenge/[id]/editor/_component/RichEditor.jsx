@@ -1,12 +1,13 @@
 'use client';
 
+import { useEffect } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Highlight from '@tiptap/extension-highlight';
 import Underline from '@tiptap/extension-underline';
 import TextAlign from '@tiptap/extension-text-align';
 import Placeholder from '@tiptap/extension-placeholder';
-import Toolbar from './toolbar';
+import Toolbar from './Toolbar';
 
 export default function RichEditor({ content, onChange }) {
   const editor = useEditor({
@@ -32,10 +33,15 @@ export default function RichEditor({ content, onChange }) {
     immediatelyRender: false,
   });
 
+  useEffect(() => {
+    if (editor && editor.getHTML() !== content) {
+      editor.commands.setContent(content);
+    }
+  }, [content, editor]);
   if (!editor) return null;
 
   return (
-    <div className="w-full h-full flex flex-col bg-white rounded-lg shadow-md p-4 overflow-hidden ">
+    <div className="w-full h-full flex flex-col bg-white rounded-lg  overflow-hidden ">
       <Toolbar editor={editor} />
 
       <EditorContent editor={editor} />

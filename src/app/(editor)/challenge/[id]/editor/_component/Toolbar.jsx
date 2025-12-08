@@ -17,7 +17,7 @@ export default function Toolbar({ editor }) {
   const colorInputRef = useRef(null);
   if (!editor) return null;
 
-  // 텍스트 스타일 함수
+  // 텍스트 스타일
   const toggleBold = () => editor.chain().focus().toggleBold().run();
   const toggleItalic = () => editor.chain().focus().toggleItalic().run();
   const toggleUnderline = () => editor.chain().focus().toggleUnderline().run();
