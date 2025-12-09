@@ -73,12 +73,13 @@ export default function ChallengeEditor() {
   }, [challengeId]);
 
   useEffect(() => {
+    let timer;
     const savedData = localStorage.getItem(STORAGE_KEY);
     if (savedData) {
-      const timer = setTimeout(() => {
-        const savedData = localStorage.getItem(STORAGE_KEY);
-        if (savedData) {
-          const parsedData = JSON.parse(savedData);
+      timer = setTimeout(() => {
+        const currentSavedData = localStorage.getItem(STORAGE_KEY);
+        if (currentSavedData) {
+          const parsedData = JSON.parse(currentSavedData);
           if (Array.isArray(parsedData) && parsedData.length > 0) {
             setDrafts(parsedData);
             setShowLoadAlert(true);
@@ -87,7 +88,9 @@ export default function ChallengeEditor() {
       }, 0);
     }
 
-    return () => clearTimeout(timer);
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
   }, []);
 
   const handleSaveDraft = () => {
