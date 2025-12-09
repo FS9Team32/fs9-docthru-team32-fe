@@ -5,10 +5,10 @@ export const authService = {
       method: 'POST',
       body: JSON.stringify({ email, password }),
     }),
-  signup: ({ nickname, email, password, passwordConfirmation }) =>
+  signup: ({ nickname, email, password }) =>
     defaultFetch('/auth/signup', {
       method: 'POST',
-      body: JSON.stringify({ nickname, email, password, passwordConfirmation }),
+      body: JSON.stringify({ nickname, email, password }),
     }),
 
   refresh: () =>
