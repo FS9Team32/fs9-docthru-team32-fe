@@ -1,28 +1,45 @@
 'use client';
 
-import { createContext, useContext, useState } from 'react';
-import { MOCK_USER, MOCK_ADMIN } from '@/constants/mockData';
+import { createContext, useContext, useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(MOCK_USER);
+  const [user, setUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const router = useRouter();
 
-  const login = (userData) => {
-    setUser(userData ?? MOCK_USER);
+  useEffect(() => {
+    const restoreUser = () => {
+      const storedUser = localStorage.getItem('user');
+      if (storedUser) {
+        setUser(JSON.parse(storedUser));
+      }
+      setIsLoading(false);
+    };
+
+    setTimeout(restoreUser, 0);
+  }, []);
+
+  const login = ({ user, accessToken }) => {
+    localStorage.setItem('user', JSON.stringify(user));
+    localStorage.setItem('accessToken', accessToken);
+    setUser(user);
   };
 
   const logout = () => {
+    localStorage.removeItem('user');
+    localStorage.removeItem('accessToken');
     setUser(null);
+    router.push('/login');
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
-      {children}
+    <AuthContext.Provider value={{ user, login, logout, isLoading }}>
+      {isLoading ? <div>Loading...</div> : children}
     </AuthContext.Provider>
   );
 }
 
-export function useAuth() {
-  return useContext(AuthContext);
-}
+export const useAuth = () => useContext(AuthContext);
