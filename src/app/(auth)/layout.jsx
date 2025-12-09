@@ -1,9 +1,12 @@
-'use client';
+import { checkAndRefreshAuth } from '@/lib/action/auth';
+import { redirect, RedirectType } from 'next/navigation';
 
-export default function AuthLayout({ children }) {
-  return (
-    <div className="flex min-h-screen items-center justify-center">
-      {children}
-    </div>
-  );
+export default async function AuthLayout({ children }) {
+  const isAuthenticated = await checkAndRefreshAuth();
+
+  if (isAuthenticated) {
+    redirect('/', RedirectType.replace);
+  }
+
+  return <div className="min-h-screen w-full">{children}</div>;
 }
