@@ -1,10 +1,13 @@
 'use client';
 
+import { useEffect } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
+import { useRouter } from 'next/navigation';
 import InputField from '@/components/Field/InputField';
 import TextAreaField from '@/components/Field/TextAreaField';
 import CalendarField from '@/components/Field/CalendarField';
 import CategoryField from '@/components/Field/CategoryField';
+import { useAuth } from '@/providers/AuthProvider';
 import {
   CATEGORY_LABELS,
   CATEGORY_TEXT,
@@ -87,6 +90,9 @@ const validateUrlExists = async (url) => {
 };
 
 export default function CreateChallengePage() {
+  const router = useRouter();
+  const { user, isLoading } = useAuth();
+
   const methods = useForm({
     mode: 'onChange',
     defaultValues: {
@@ -99,6 +105,14 @@ export default function CreateChallengePage() {
       description: '',
     },
   });
+
+  useEffect(() => {
+    if (!isLoading && !user) {
+      router.replace('/login');
+    }
+  }, [isLoading, user, router]);
+
+  if (isLoading || !user) return null;
 
   const { handleSubmit } = methods;
 
@@ -123,11 +137,8 @@ export default function CreateChallengePage() {
   };
 
   return (
-    <div
-      className="min-h-screen w-screen -ml-[calc((100vw-100%)/2)] -mr-[calc((100vw-100%)/2)] px-4 py-8"
-      style={{ backgroundColor: '#FFFFFF' }}
-    >
-      <div className="mx-auto" style={{ maxWidth: '590px' }}>
+    <div className="min-h-screen w-screen -ml-[calc((100vw-100%)/2)] -mr-[calc((100vw-100%)/2)] px-4 py-8 bg-white">
+      <div className="mx-auto max-w-[590px]">
         <h1 className="mb-8 text-xl font-semibold leading-none text-gray-900">
           신규 챌린지 신청
         </h1>
@@ -135,8 +146,7 @@ export default function CreateChallengePage() {
         <FormProvider {...methods}>
           <form
             onSubmit={handleSubmit(onSubmit)}
-            className="p-10 space-y-10 mx-auto bg-white min-h-screen"
-            style={{ maxWidth: '590px' }}
+            className="p-10 space-y-10 mx-auto bg-white min-h-screen max-w-[590px]"
           >
             {/* 1. 제목 */}
             <section>
