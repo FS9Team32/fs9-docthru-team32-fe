@@ -12,34 +12,23 @@ import listImg from '@/assets/icon_list.svg';
 
 const STORAGE_KEY = 'challenge_draft_content';
 
-const MOCK_DB = {
-  1: {
-    id: '1',
-    title: '개발자로서 자신만의 브랜드를 구축하는 방법 (dailydev)',
-    originalLink:
-      'https://inpa.tistory.com/entry/JS-%F0%9F%93%9A-windowopen-%EC%A0%95%EB%A6%AC#%E2%80%8Bwindow.open_%EC%9D%B8%EC%88%98_%EC%A0%95%EB%A6%AC',
-  },
-  2: {
-    id: '2',
-    title: '2222',
-    originalLink:
-      'https://inpa.tistory.com/entry/JS-%F0%9F%93%9A-windowopen-%EC%A0%95%EB%A6%AC#%E2%80%8Bwindow.open_%EC%9D%B8%EC%88%98_%EC%A0%95%EB%A6%AC',
-  },
-  3: {
-    id: '3',
-    title: '3333',
-    originalLink:
-      'https://inpa.tistory.com/entry/JS-%F0%9F%93%9A-windowopen-%EC%A0%95%EB%A6%AC#%E2%80%8Bwindow.open_%EC%9D%B8%EC%88%98_%EC%A0%95%EB%A6%AC',
-  },
-};
-
 const fetchChallengeInfo = async (id) => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      const data = MOCK_DB[id];
-      resolve(data || { id, title: 'Unknown', originalLink: '' });
-    }, 500);
-  });
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/challenges/${id}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+        },
+      },
+    );
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error(error);
+  }
 };
 
 export default function ChallengeEditor() {
