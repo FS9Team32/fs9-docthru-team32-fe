@@ -59,6 +59,8 @@ export const tokenFetch = async (url, options = {}) => {
 
       localStorage.setItem('accessToken', newAccessToken);
 
+      document.cookie = `accessToken=${newAccessToken}; path=/; max-age=86400`;
+
       res = await fetch(`${BASE_URL}${url}`, {
         ...options,
         headers: {

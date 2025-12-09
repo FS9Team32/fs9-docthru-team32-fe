@@ -15,12 +15,13 @@ export default function LoginPage() {
     try {
       const res = await authService.login({ email, password });
 
-      login({
-        user: res,
-        accessToken: res.accessToken,
-      });
+      const { accessToken, ...user } = res;
 
-      router.push('/');
+      login({
+        user: user,
+        accessToken: accessToken,
+      });
+      router.push('/challenge');
       return { success: true };
     } catch (err) {
       return { passwordError: '이메일 또는 비밀번호가 올바르지 않습니다.' };

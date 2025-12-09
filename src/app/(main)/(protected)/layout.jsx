@@ -1,4 +1,4 @@
-import { checkAndRefreshAuth } from '@/lib/actions/auth';
+import { checkAndRefreshAuth } from '@/lib/action/auth';
 import { redirect } from 'next/navigation';
 import Header from '@/components/Header';
 
