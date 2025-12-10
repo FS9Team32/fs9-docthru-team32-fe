@@ -46,6 +46,19 @@ export const STATUS_LABELS = STATUS_OPTIONS.map((opt) => opt.label);
 // 챌린지 상태 값 배열
 export const STATUS_VALUES = STATUS_OPTIONS.map((opt) => opt.value);
 
+// 챌린지 상태 코드/텍스트 (공용)
+export const CHALLENGE_STATUS = {
+  RECRUITING: 'RECRUITING',
+  FILLED: 'FILLED',
+  CLOSED: 'CLOSED',
+};
+
+export const CHALLENGE_STATUS_TEXT = {
+  RECRUITING: '진행중',
+  FILLED: '모집 완료',
+  CLOSED: '마감',
+};
+
 // 신청 상태 텍스트
 export const APPLICATION_STATUS_TEXT = {
   PENDING: '승인 대기',
