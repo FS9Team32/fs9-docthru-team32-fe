@@ -1,18 +1,22 @@
-import { defaultFetch } from '@/lib/utils/fetchClient';
+import { defaultFetch, tokenFetch } from '@/lib/utils/fetchClient';
+
 export const authService = {
   login: ({ email, password }) =>
     defaultFetch('/auth/login', {
       method: 'POST',
       body: JSON.stringify({ email, password }),
+      cache: 'no-store',
     }),
   signup: ({ nickname, email, password }) =>
     defaultFetch('/auth/signup', {
       method: 'POST',
       body: JSON.stringify({ nickname, email, password }),
+      cache: 'no-store',
     }),
 
   refresh: () =>
     defaultFetch('/auth/refresh-token', {
       method: 'POST',
+      cache: 'no-store',
     }),
 };

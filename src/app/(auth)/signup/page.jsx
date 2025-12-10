@@ -5,13 +5,13 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import AuthForm from '@/components/auth/AuthForm';
 import bigLogo from '@/assets/big_logo.svg';
-import { authService } from '@/lib/services/authService';
 import { useAuth } from '@/providers/AuthProvider';
 
 export default function SignupPage() {
   const router = useRouter();
   const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const { login } = useAuth();
+
+  const { signup } = useAuth();
 
   const handleSignup = async ({
     nickname,
@@ -24,24 +24,15 @@ export default function SignupPage() {
     }
 
     try {
-      const response = await authService.signup({ nickname, email, password });
-
-      const { accessToken, ...user } = response;
-
-      login({ user, accessToken });
+      await signup(nickname, email, password, confirmPassword);
 
       setIsPopupOpen(true);
       return { success: true };
     } catch (err) {
-      const message = err?.message?.trim();
+      const message = err?.message?.trim() || '';
 
-      if (message?.includes('Email Already Exists')) {
+      if (message.includes('Email Already Exists')) {
         return { emailError: '이미 사용 중인 이메일입니다.' };
-      }
-      if (message?.includes('DB Error Accured')) {
-        return {
-          emailError: '서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
-        };
       }
       return { emailError: '회원가입에 실패했습니다.' };
     }
@@ -49,7 +40,6 @@ export default function SignupPage() {
 
   const handleClosePopup = () => {
     setIsPopupOpen(false);
-
     router.push('/challenge');
   };
 

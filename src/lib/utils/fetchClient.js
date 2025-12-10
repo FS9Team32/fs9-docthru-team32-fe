@@ -1,79 +1,90 @@
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
-
-const parseJSON = async (res) => {
-  try {
-    return await res.json();
-  } catch {
-    return {};
-  }
-};
+import { getServerSideToken } from '../action/auth';
 
 export const defaultFetch = async (url, options = {}) => {
-  const res = await fetch(`${BASE_URL}${url}`, {
-    method: options.method || 'GET',
+  const baseURL = process.env.NEXT_PUBLIC_API_URL;
+  const defaultOptions = {
     headers: {
       'Content-Type': 'application/json',
-      ...(options.headers || {}),
     },
-    body: options.body || null,
-    credentials: 'include',
-  });
+    cache: 'force-cache',
+  };
 
-  const data = await parseJSON(res);
-
-  if (!res.ok) {
-    const message =
-      data?.message ||
-      data?.error ||
-      data?.msg ||
-      res.statusText ||
-      'API Error';
-
-    throw new Error(message);
-  }
-
-  return data;
-};
-
-export const tokenFetch = async (url, options = {}) => {
-  let accessToken = localStorage.getItem('accessToken');
-
-  let res = await fetch(`${BASE_URL}${url}`, {
+  const mergedOptions = {
+    ...defaultOptions,
     ...options,
     headers: {
-      'Content-Type': 'application/json',
-      Authorization: accessToken ? `Bearer ${accessToken}` : '',
-      ...(options.headers || {}),
+      ...defaultOptions.headers,
+      ...options.headers,
     },
-    credentials: 'include',
-  });
+  };
 
-  if (res.status === 401) {
-    const refreshRes = await fetch(`${BASE_URL}/auth/refresh-token`, {
+  const response = await fetch(`${baseURL}${url}`, mergedOptions);
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message);
+  }
+
+  return response.json();
+};
+export const tokenFetch = async (url, options = {}) => {
+  const baseURL = process.env.NEXT_PUBLIC_API_URL;
+  const token = await getServerSideToken('accessToken'); // accessToken 확인
+
+  if (!token) {
+    throw new Error('Access Token is missing');
+  }
+
+  const defaultOptions = {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`, // Bearer 토큰 추가
+    },
+    cache: 'no-store',
+  };
+
+  const mergedOptions = {
+    ...defaultOptions,
+    ...options,
+    headers: {
+      ...defaultOptions.headers,
+      ...options.headers,
+    },
+  };
+
+  let response = await fetch(`${baseURL}${url}`, mergedOptions);
+
+  // 토큰 만료 시 자동 갱신 시도
+  if (response.status === 401) {
+    // 토큰 만료 시
+    const refreshToken = await getServerSideToken('refreshToken');
+    const refreshResponse = await fetch(`${baseURL}/auth/refresh-token`, {
       method: 'POST',
-      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ refreshToken }),
+      cache: 'no-store',
     });
 
-    if (refreshRes.ok) {
-      const { accessToken: newAccessToken } = await refreshRes.json();
+    if (refreshResponse.ok) {
+      const { accessToken: newAccessToken } = await refreshResponse.json();
+      await updateAccessToken(newAccessToken); // 새 토큰 업데이트
 
-      localStorage.setItem('accessToken', newAccessToken);
-
-      document.cookie = `accessToken=${newAccessToken}; path=/; max-age=86400`;
-
-      res = await fetch(`${BASE_URL}${url}`, {
-        ...options,
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${newAccessToken}`,
-          ...(options.headers || {}),
-        },
-        credentials: 'include',
-      });
+      // 새 토큰으로 재시도
+      response = await fetch(`${baseURL}${url}`, mergedOptions);
+    } else {
+      throw new Error('Token refresh failed');
     }
   }
 
-  const data = await parseJSON(res);
-  if (!res.ok) throw new Error(data.message || 'API Error');
-  return data;
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || 'Request failed');
+  }
+
+  const contentType = response.headers.get('content-type');
+  if (contentType && contentType.includes('application/json')) {
+    return response.json(); // JSON 응답 반환
+  }
+
+  return { status: response.status, ok: response.ok }; // JSON이 아닌 경우 상태 코드와 OK 플래그 반환
 };

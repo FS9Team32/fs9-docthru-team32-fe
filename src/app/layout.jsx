@@ -1,7 +1,7 @@
 import './globals.css';
 import localFont from 'next/font/local';
 import { ModalProvider } from '@/providers/ModalProvider';
-import { AuthProvider } from '@/providers/AuthProvider';
+import AuthProvider from '@/providers/AuthProvider';
 
 export const metadata = {
   title: '독스루',

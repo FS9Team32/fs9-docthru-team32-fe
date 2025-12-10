@@ -4,7 +4,6 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import AuthForm from '@/components/auth/AuthForm';
 import bigLogo from '@/assets/big_logo.svg';
-import { authService } from '@/lib/services/authService';
 import { useAuth } from '@/providers/AuthProvider';
 
 export default function LoginPage() {
@@ -13,14 +12,7 @@ export default function LoginPage() {
 
   const handleLogin = async ({ email, password }) => {
     try {
-      const res = await authService.login({ email, password });
-
-      const { accessToken, ...user } = res;
-
-      login({
-        user: user,
-        accessToken: accessToken,
-      });
+      await login(email, password);
       router.push('/challenge');
       return { success: true };
     } catch (err) {
