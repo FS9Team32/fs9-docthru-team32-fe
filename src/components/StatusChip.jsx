@@ -1,4 +1,8 @@
 import { cn } from '@/lib/util';
+import {
+  APPLICATION_STATUS_TEXT,
+  APPLICATION_STATUS_COLORS,
+} from '@/constants/challengeConstants';
 
 {
   /*
@@ -10,27 +14,14 @@ import { cn } from '@/lib/util';
   */
 }
 
-const CATEGORY_TEXT = {
-  PENDING: '승인 대기',
-  APPROVED: '신청 승인',
-  REJECTED: '신청 거절',
-  DELETED: '챌린지 삭제',
-};
-const CATEGORY_COLORS = {
-  PENDING: 'bg-[#FFFDE7] text-[#F2BC00]',
-  REJECTED: 'bg-[#FFF0F0] text-[#E54946]',
-  APPROVED: 'bg-[#DFF0FF] text-[#4095DE]',
-  DELETED: 'bg-gray-200 text-gray-500',
-};
-
 export default function StatusChip({
   children,
   type,
   className: cls,
   ...props
 }) {
-  const chipContent = type ? CATEGORY_TEXT[type] : children;
-  const typeClass = type ? CATEGORY_COLORS[type] : '';
+  const chipContent = type ? APPLICATION_STATUS_TEXT[type] : children;
+  const typeClass = type ? APPLICATION_STATUS_COLORS[type] : '';
 
   const className = cn(
     'px-2 py-1 items-center justify-center rounded-l-sm ',

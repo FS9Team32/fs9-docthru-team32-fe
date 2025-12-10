@@ -34,14 +34,47 @@ export const DOCUMENT_TYPE_VALUES = DOCUMENT_TYPE_OPTIONS.map(
   (opt) => opt.value,
 );
 
-// 상태 옵션
+// 챌린지 상태 옵션 (진행중/마감)
 export const STATUS_OPTIONS = [
   { label: '진행중', value: 'RECRUITING' },
   { label: '마감', value: 'CLOSED' },
 ];
 
-// 상태 라벨 배열
+// 챌린지 상태 라벨 배열
 export const STATUS_LABELS = STATUS_OPTIONS.map((opt) => opt.label);
 
-// 상태 값 배열
+// 챌린지 상태 값 배열
 export const STATUS_VALUES = STATUS_OPTIONS.map((opt) => opt.value);
+
+// 신청 상태 텍스트
+export const APPLICATION_STATUS_TEXT = {
+  PENDING: '승인 대기',
+  APPROVED: '신청 승인',
+  REJECTED: '신청 거절',
+  DELETED: '챌린지 삭제',
+};
+
+// 신청 상태 색상
+export const APPLICATION_STATUS_COLORS = {
+  PENDING: 'bg-[#FFFDE7] text-[#F2BC00]',
+  REJECTED: 'bg-[#FFF0F0] text-[#E54946]',
+  APPROVED: 'bg-[#DFF0FF] text-[#4095DE]',
+  DELETED: 'bg-gray-200 text-gray-500',
+};
+
+// 신청 상태 옵션 (필터용)
+export const APPLICATION_STATUS_OPTIONS = [
+  { label: '전체 보기', value: 'ALL' },
+  { label: APPLICATION_STATUS_TEXT.PENDING, value: 'PENDING' },
+  { label: APPLICATION_STATUS_TEXT.APPROVED, value: 'APPROVED' },
+  { label: APPLICATION_STATUS_TEXT.REJECTED, value: 'REJECTED' },
+  { label: APPLICATION_STATUS_TEXT.DELETED, value: 'DELETED' },
+];
+
+// 정렬 옵션
+export const SORT_OPTIONS = [
+  { label: '신청 시간 빠른순', value: 'APPLY_ASC' },
+  { label: '신청 시간 느린순', value: 'APPLY_DESC' },
+  { label: '마감 기한 빠른순', value: 'DEADLINE_ASC' },
+  { label: '마감 기한 느린순', value: 'DEADLINE_DESC' },
+];
