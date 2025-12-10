@@ -9,7 +9,7 @@ import arrowUp from '@/assets/arrowUp.png';
 // 필터 및 정렬 옵션 데이터
 const FILTER_OPTIONS = [
   { label: '전체 보기', value: 'ALL' },
-  { label: '승인 대기', value: 'WAITING' },
+  { label: '승인 대기', value: 'PENDING' },
   { label: '신청 승인', value: 'APPROVED' },
   { label: '신청 거절', value: 'REJECTED' },
   { label: '챌린지 삭제', value: 'DELETED' },
