@@ -5,6 +5,10 @@ import InputField from '@/components/Field/InputField';
 import CalendarField from '@/components/Field/CalendarField';
 import TextAreaField from '@/components/Field/TextAreaField';
 import CategoryField from '@/components/Field/CategoryField';
+import {
+  CATEGORY_LABELS,
+  DOCUMENT_TYPE_LABELS,
+} from '@/constants/challengeConstants';
 
 export default function GuidePage() {
   const methods = useForm({
@@ -46,7 +50,7 @@ export default function GuidePage() {
           <CategoryField
             name="category"
             label="분야"
-            categories={['Next.js', 'API', 'Career', 'Modern JS', 'Web']}
+            categories={CATEGORY_LABELS}
             rules={{ required: '분야를 선택해주세요.' }}
           />
         </section>
@@ -56,7 +60,7 @@ export default function GuidePage() {
           <CategoryField
             name="docType"
             label="문서 타입"
-            categories={['블로그', '공식문서']}
+            categories={DOCUMENT_TYPE_LABELS}
             rules={{ required: '문서 타입을 선택해주세요.' }}
           />
         </section>

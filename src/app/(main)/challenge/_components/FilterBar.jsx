@@ -3,24 +3,13 @@
 import { useState, useRef } from 'react';
 import Image from 'next/image';
 import CategoryChip from '@/components/CategoryChip';
-import TypeChip from '@/components/TypeChip';
 import icFilter from '@/assets/ic_filter.svg';
 import icOut from '@/assets/ic_out.svg';
-
-const CATEGORY_OPTIONS = Object.entries(TypeChip.text).map(
-  ([value, label]) => ({
-    label,
-    value,
-  }),
-);
-const DOCUMENT_TYPE_OPTIONS = [
-  { label: '공식문서', value: 'official' },
-  { label: '블로그', value: 'blog' },
-];
-const STATUS_OPTIONS = [
-  { label: '진행중', value: 'RECRUITING' },
-  { label: '마감', value: 'CLOSED' },
-];
+import {
+  CATEGORY_OPTIONS,
+  DOCUMENT_TYPE_OPTIONS,
+  STATUS_OPTIONS,
+} from '@/constants/challengeConstants';
 
 export default function FilterBar({ onApply, onReset }) {
   const [isOpen, setIsOpen] = useState(false);

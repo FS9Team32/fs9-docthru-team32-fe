@@ -12,6 +12,8 @@ import icPersonCurrent from '@/assets/ic_personcurrent.svg';
 
 export default function ChallengeCard({ challenge }) {
   const deadlineDate = useMemo(() => {
+    if (typeof window === 'undefined') return '';
+
     const date = new Date(challenge.deadlineAt);
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');

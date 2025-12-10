@@ -1,14 +1,8 @@
 import { cn } from '@/lib/util';
+import { CATEGORY_TEXT } from '@/constants/challengeConstants';
 
 //<TypeChip type="Modern" />
 //<TypeChip type="Next" />
-const CATEGORY_TEXT = {
-  Next: 'Next.js',
-  API: 'API',
-  Career: 'Career',
-  Modern: 'Modern JS',
-  Web: 'Web',
-};
 export const CATEGORY_COLORS = {
   Next: 'bg-[#79e16a]',
   API: 'bg-[#FF905E]',
