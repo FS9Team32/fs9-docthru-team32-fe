@@ -8,59 +8,46 @@ import { ArrowUpRight } from 'lucide-react';
 import LinkButton from '@/components/LinkButton';
 import StatusBanner from '../_components/StatusBanner';
 import ReasonBox from '../_components/ReasonBox';
-import TypeChip from '@/components/TypeChip';
-import CategoryChip from '@/components/CategoryChip';
 import CancelMenu from './CancelMenu';
 import CancelModal from '../_components/CancelModal';
+import TypeChip from '@/components/TypeChip';
 
-import {
-  DOCUMENT_TYPE_OPTIONS,
-  CATEGORY_TEXT,
-} from '@/constants/challengeConstants';
-
+import { CATEGORY_TEXT } from '@/constants/challengeConstants';
 import timeIcon from '@/assets/time.svg';
 import personIcon from '@/assets/person.svg';
 
 const getMatchingChipKey = (input) => {
   if (!input) return null;
   const cleanInput = input.trim().toUpperCase();
-
   const matchedEntry = Object.entries(CATEGORY_TEXT).find(([key, value]) => {
     return (
       key.toUpperCase() === cleanInput || value.toUpperCase() === cleanInput
     );
   });
-
   return matchedEntry ? matchedEntry[0] : null;
 };
 
 const getDocumentLabel = (value) => {
-  if (!value) return '';
-  const option = DOCUMENT_TYPE_OPTIONS.find((opt) => opt.value === value);
-  return option ? option.label : value;
+  const map = { official: '공식문서', blog: '블로그' };
+  return map[value] || value;
 };
 
 const formatDeadline = (dateString) => {
   if (!dateString) return '';
   const date = new Date(dateString);
-  if (Number.isNaN(date.getTime())) return '';
-  return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일 마감`;
+  return isNaN(date.getTime())
+    ? ''
+    : `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일 마감`;
 };
 
 export default function ChallengeDetailView({ data }) {
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  if (!data) {
-    return (
-      <div className="p-10 text-center text-gray-500">
-        데이터를 불러올 수 없습니다.
-      </div>
-    );
-  }
+  if (!data)
+    return <div className="p-10 text-center text-gray-500">데이터 없음</div>;
 
   const {
-    id,
     status,
     adminFeedback,
     reviewedAt,
@@ -107,19 +94,17 @@ export default function ChallengeDetailView({ data }) {
       </div>
 
       <div className="mb-6 flex flex-wrap items-center gap-2">
-        {category && (
+        {chipType && (
           <TypeChip
             type={chipType}
-            className="font-bold inline-flex items-center"
-          >
-            {category}
-          </TypeChip>
+            className="text-xs font-bold px-2.5 py-1 h-auto"
+          />
         )}
 
         {documentType && (
-          <CategoryChip className="rounded border border-gray-300 bg-white px-3 py-1 text-xs font-medium tracking-wide text-gray-500 uppercase">
+          <span className="inline-flex items-center justify-center rounded-lg border border-gray-200 bg-white px-2.5 py-1 text-xs font-medium text-gray-500 uppercase tracking-wide">
             {getDocumentLabel(documentType)}
-          </CategoryChip>
+          </span>
         )}
       </div>
 
@@ -131,23 +116,11 @@ export default function ChallengeDetailView({ data }) {
 
       <div className="mb-8 flex items-center gap-5 text-sm font-medium text-gray-500">
         <div className="flex items-center gap-1.5">
-          <Image
-            src={timeIcon}
-            alt="마감일"
-            width={24}
-            height={24}
-            className="h-6 w-6"
-          />
+          <Image src={timeIcon} alt="마감일" width={24} height={24} />
           <span className="mt-0.5">{formatDeadline(deadlineAt)}</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <Image
-            src={personIcon}
-            alt="참여 인원"
-            width={24}
-            height={24}
-            className="h-6 w-6"
-          />
+          <Image src={personIcon} alt="인원" width={24} height={24} />
           <span className="mt-0.5">
             <span className="font-bold text-gray-900">
               {currentParticipants ?? 1}
@@ -168,7 +141,7 @@ export default function ChallengeDetailView({ data }) {
               alt="Link Preview"
               fill
               className="object-cover"
-              unoptimized={true}
+              unoptimized
             />
           ) : (
             <div className="flex h-full items-center justify-center text-gray-400">
@@ -178,14 +151,12 @@ export default function ChallengeDetailView({ data }) {
           <div className="absolute right-4 top-4 z-10">
             <LinkButton
               href={originalLink || '#'}
+              onClick={(e) => !originalLink && e.preventDefault()}
               className={`inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-bold text-gray-900 shadow-md transition-colors ${
                 originalLink
                   ? 'hover:bg-gray-50'
                   : 'cursor-not-allowed opacity-70'
               }`}
-              onClick={(e) => {
-                if (!originalLink) e.preventDefault();
-              }}
             >
               <span>링크 열기</span>
               <ArrowUpRight size={16} />
