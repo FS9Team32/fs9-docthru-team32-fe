@@ -4,23 +4,10 @@ import { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import arrowDown from '@/assets/arrowDown.png';
 import arrowUp from '@/assets/arrowUp.png';
-
-// figma 버전에서 필터,정렬 구분 전체보기,삭제 추가
-// 필터 및 정렬 옵션 데이터
-const FILTER_OPTIONS = [
-  { label: '전체 보기', value: 'ALL' },
-  { label: '승인 대기', value: 'WAITING' },
-  { label: '신청 승인', value: 'APPROVED' },
-  { label: '신청 거절', value: 'REJECTED' },
-  { label: '챌린지 삭제', value: 'DELETED' },
-];
-
-const SORT_OPTIONS = [
-  { label: '신청 시간 빠른순', value: 'APPLY_ASC' },
-  { label: '신청 시간 느린순', value: 'APPLY_DESC' },
-  { label: '마감 기한 빠른순', value: 'DEADLINE_ASC' },
-  { label: '마감 기한 느린순', value: 'DEADLINE_DESC' },
-];
+import {
+  APPLICATION_STATUS_OPTIONS,
+  SORT_OPTIONS,
+} from '@/constants/challengeConstants';
 
 export default function ListDropdown({
   filterValue = 'ALL',
@@ -31,7 +18,8 @@ export default function ListDropdown({
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
   const currentLabel =
-    FILTER_OPTIONS.find((o) => o.value === filterValue)?.label || '전체 보기';
+    APPLICATION_STATUS_OPTIONS.find((o) => o.value === filterValue)?.label ||
+    '전체 보기';
 
   const handleSelect = (type, value) => {
     // 선택 시 닫힘
@@ -89,7 +77,7 @@ export default function ListDropdown({
         <div className="ring-opacity-5 absolute left-0 z-50 mt-2 w-full rounded-lg bg-white shadow-xl ring-1 ring-black">
           <ul className="py-2   text-gray-700">
             {/* 1. 상태 필터 영역 */}
-            {FILTER_OPTIONS.map((option) => (
+            {APPLICATION_STATUS_OPTIONS.map((option) => (
               <li key={option.value}>
                 <button
                   type="button"
