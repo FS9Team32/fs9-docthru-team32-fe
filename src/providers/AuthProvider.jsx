@@ -54,7 +54,7 @@ export default function AuthProvider({ children }) {
       throw new Error(error || '회원가입 처리 중 알 수 없는 오류');
     }
     setUser(userData);
-    router.push('/challenge');
+    router.push('/');
 
     return { success: true };
   };
@@ -66,7 +66,7 @@ export default function AuthProvider({ children }) {
     }
 
     setUser(userData);
-    router.push('/challenge');
+    router.push('/');
 
     return { success: true };
   };
@@ -111,7 +111,7 @@ export default function AuthProvider({ children }) {
         isAuthChecking,
       }}
     >
-      {children} {' '}
+      {children}
     </AuthContext.Provider>
   );
 }

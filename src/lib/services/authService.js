@@ -6,6 +6,7 @@ export const authService = {
       method: 'POST',
       body: JSON.stringify({ email, password }),
       cache: 'no-store',
+      credentials: 'include',
     }),
   signup: ({ nickname, email, password }) =>
     defaultFetch('/auth/signup', {

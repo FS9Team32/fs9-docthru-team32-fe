@@ -17,7 +17,7 @@ export const defaultFetch = async (url, options = {}) => {
       ...options.headers,
     },
   };
-
+  console.log('mergedOptions', mergedOptions);
   const response = await fetch(`${baseURL}${url}`, mergedOptions);
 
   if (!response.ok) {
