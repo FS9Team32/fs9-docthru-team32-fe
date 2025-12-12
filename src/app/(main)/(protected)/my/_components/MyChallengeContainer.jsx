@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import MyChallengeTabs from './MyChallengeTabs';
 import ApplicationTable from './ApplicationTable';
+import { challengeApplicationService } from '@/lib/services/challenge/challengeApplicationService';
 
 // 공통 레이아웃 컴포넌트
 const EmptyState = ({ message, textColor = 'text-gray-400' }) => (
@@ -17,10 +18,32 @@ export default function MyChallengeContainer() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // TODO: API 개발 완료 후 useEffect에서 API 호출 로직 추가
-  // useEffect(() => {
-  //   fetchApplications();
-  // }, [activeTab]);
+  useEffect(() => {
+    if (activeTab !== '신청한 챌린지') {
+      setApplications([]);
+      return;
+    }
+
+    setIsLoading(true);
+    setError(null);
+
+    const fetchApplications = async () => {
+      try {
+        const response = await challengeApplicationService.get();
+        const data = response?.list || [];
+
+        setApplications(Array.isArray(data) ? data : []);
+      } catch (err) {
+        setError(err.message || '신청한 챌린지를 불러오는데 실패했습니다.');
+        setApplications([]);
+      } finally {
+        // 8단계: 로딩 해제
+        setIsLoading(false);
+      }
+    };
+
+    fetchApplications();
+  }, [activeTab]);
 
   return (
     <>
