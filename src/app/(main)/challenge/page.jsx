@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import ChallengeCardList from './_components/ChallengeCardList';
@@ -8,42 +8,12 @@ import FilterBar from './_components/FilterBar';
 import SearchBar from './_components/SearchBar';
 import Pagination from './_components/Pagination';
 import iconPlus from '@/assets/icon_plus.svg';
-
-// 필터 테스트용 임시 mock 데이터
-const mockChallenges = [
-  // {
-  //   id: 1,
-  //   title: 'Next.js로 블로그 만들기',
-  //   category: 'Next',
-  //   documentType: 'official',
-  //   status: 'RECRUITING',
-  //   workCount: 2,
-  //   maxParticipants: 5,
-  //   deadlineAt: '2024-03-03T23:59:59Z',
-  // },
-  // {
-  //   id: 2,
-  //   title: 'API 문서 따라하기',
-  //   category: 'API',
-  //   documentType: 'blog',
-  //   status: 'FILLED',
-  //   workCount: 3,
-  //   maxParticipants: 3,
-  //   deadlineAt: '2024-04-01T23:59:59Z',
-  // },
-  // {
-  //   id: 3,
-  //   title: 'Career 전략 세우기',
-  //   category: 'Career',
-  //   documentType: 'official',
-  //   status: 'CLOSED',
-  //   workCount: 1,
-  //   maxParticipants: 4,
-  //   deadlineAt: '2024-05-10T23:59:59Z',
-  // },
-];
+import { challengeService } from '@/lib/services/challenge/challengeService';
 
 export default function ChallengePage() {
+  const [challenges, setChallenges] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
   const [filters, setFilters] = useState({
     categories: [],
     documentType: '',
@@ -52,8 +22,33 @@ export default function ChallengePage() {
   const [searchKeyword, setSearchKeyword] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
 
+  useEffect(() => {
+    const fetchChallenges = async () => {
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        const response = await challengeService.getList();
+
+        // 응답 데이터 파싱
+        const data = response?.list || [];
+
+        // 배열로 변환하여 저장
+        setChallenges(Array.isArray(data) ? data : []);
+      } catch (err) {
+        console.error('챌린지 목록 조회 실패:', err);
+        setError(err.message || '챌린지 목록을 불러오는데 실패했습니다.');
+        setChallenges([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchChallenges();
+  }, []);
+
   const filteredChallenges = useMemo(() => {
-    let result = [...mockChallenges];
+    let result = [...challenges];
 
     if (searchKeyword.trim()) {
       result = result.filter((challenge) =>
@@ -80,7 +75,7 @@ export default function ChallengePage() {
     }
 
     return result;
-  }, [filters, searchKeyword]);
+  }, [challenges, filters, searchKeyword]);
 
   const handleApplyFilters = (newFilters) => {
     setFilters(newFilters);
