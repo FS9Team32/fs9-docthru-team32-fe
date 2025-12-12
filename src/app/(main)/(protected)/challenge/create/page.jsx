@@ -8,7 +8,7 @@ import TextAreaField from '@/components/Field/TextAreaField';
 import CalendarField from '@/components/Field/CalendarField';
 import CategoryField from '@/components/Field/CategoryField';
 import { useAuth } from '@/providers/AuthProvider';
-import { challengeService } from '@/lib/services/challenge/createChallengeService';
+import { challengeApplicationService } from '@/lib/services/challenge/challengeApplicationService';
 import {
   CATEGORY_LABELS,
   CATEGORY_TEXT,
@@ -141,7 +141,7 @@ export default function CreateChallengePage() {
         description: data.description,
       };
 
-      await challengeService.create(finalData);
+      await challengeApplicationService.create(finalData);
 
       // 성공 시 /my로 리다이렉트
       router.push('/my');
