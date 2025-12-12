@@ -62,7 +62,7 @@ export default function ListDropdown({
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className={`flex w-full items-center justify-between rounded-4xl border bg-white px-4 py-2.5 ${isOpen ? 'border-purple-500 text-purple-600 ring-1 ring-purple-500' : 'border-gray-200 text-gray-700 hover:bg-gray-50'}`}
+        className={`flex w-full items-center justify-between rounded-4xl border bg-white px-4 py-2.5 ${isOpen ? 'border-gray-300 text-gray-600 ring-1 ring-gray-300' : 'border-gray-200 text-gray-700 hover:bg-gray-50'}`}
       >
         <span>{currentLabel}</span>
         {isOpen ? (
