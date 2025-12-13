@@ -50,15 +50,15 @@ export default function FeedbackItem({
             <div className="flex shrink-0">
               {feedback.user.profileImage ? (
                 <Image
-                  src={feedback.user.profileImage}
-                  alt={feedback.user.name}
+                  src={MemberImg}
+                  alt={feedback.user.nickname}
                   width={32}
                   height={32}
                   className="w-8 h-8 rounded-full object-cover"
                 />
               ) : (
                 <div className="w-8 h-8 rounded-full bg-yellow-400 flex items-center justify-center text-white font-bold text-xs">
-                  {feedback.user.name[0]}
+                  {feedback.user.nickname[0]}
                 </div>
               )}
             </div>
@@ -66,7 +66,7 @@ export default function FeedbackItem({
             <div className="flex-1 flex justify-between items-start h-7 mb-4">
               <div className="flex flex-col">
                 <span className="font-bold text-sm text-gray-900">
-                  {feedback.user.name}
+                  {feedback.user.nickname}
                 </span>
                 <span className="text-xs text-gray-400">
                   {feedback.createdAt}
