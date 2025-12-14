@@ -1,6 +1,8 @@
 'use client';
 
 import FeedbackItem from './FeedbackItem';
+import Image from 'next/image';
+import Empty from '@/assets/empty.png';
 import Button from '@/components/Button';
 
 export default function FeedbackList({
@@ -17,7 +19,18 @@ export default function FeedbackList({
   return (
     <div className="space-y-4">
       {feedbacks.length === 0 ? (
-        <p className="">첫 번째 피드백을 남겨보세요!</p>
+        <div>
+          <Image
+            src={Empty}
+            alt="No Feedback"
+            width={450}
+            height={450}
+            className="mx-auto "
+          />
+          <p className="text-center text-gray-500 mt-10">
+            아직 피드백이 없습니다.
+          </p>
+        </div>
       ) : (
         feedbacks.map((item) => (
           <FeedbackItem
