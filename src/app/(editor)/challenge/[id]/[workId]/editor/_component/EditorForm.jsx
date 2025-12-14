@@ -22,10 +22,16 @@ const fetchChallengeInfo = async (id) => {
         },
       },
     );
-    if (!response.ok) throw new Error('Failed');
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(
+        `API 오류 발생: [${response.status}] ${response.statusText} - ${errorText}`,
+      );
+    }
+
     return await response.json();
   } catch (error) {
-    console.error(error);
+    console.error('상세 에러 로그:', error);
     return null;
   }
 };
