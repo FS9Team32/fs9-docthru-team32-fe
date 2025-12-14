@@ -16,7 +16,8 @@ export default function PostHeader({
 }) {
   const isMyPost = currentUser?.id === post.author.id;
   const isAdmin = currentUser?.role === 'ADMIN';
-  const canModify = (isMyPost || isAdmin) && !isComplete;
+  const canModify = isMyPost && !isComplete;
+
   return (
     <header className="mb-6">
       <div className="flex justify-between items-center">
