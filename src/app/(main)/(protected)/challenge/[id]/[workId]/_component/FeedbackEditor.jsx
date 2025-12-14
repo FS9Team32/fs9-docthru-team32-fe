@@ -32,7 +32,7 @@ export default function FeedbackEditor({ onSubmit }) {
           disabled={!text.trim()}
           className=" rounded-full ml-4 w-10 h-10 items-center background-gray-300 hover:bg-gray-700"
         >
-          <ArrowDown className="" size={24} />
+          <ArrowDown size={24} />
         </Button>
       </div>
     </div>

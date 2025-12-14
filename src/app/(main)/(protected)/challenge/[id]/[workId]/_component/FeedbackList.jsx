@@ -46,7 +46,7 @@ export default function FeedbackList({
 
       {hasMore && (
         <div className="text-center mt-6">
-          <Button variant="outline" size="md" onClick={onLoadMore} className="">
+          <Button variant="outline" size="md" onClick={onLoadMore}>
             더 보기
           </Button>
         </div>

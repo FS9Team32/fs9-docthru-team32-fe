@@ -119,9 +119,7 @@ export default function Page() {
           </div>
 
           <div className="flex flex-col gap-2 rounded-lg border bg-gray-50 p-3">
-            <LinkButton href="/test" className="">
-              테스트 페이지로
-            </LinkButton>
+            <LinkButton href="/test">테스트 페이지로</LinkButton>
           </div>
         </div>
       </section>
