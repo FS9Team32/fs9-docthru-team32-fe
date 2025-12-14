@@ -50,7 +50,7 @@ export default function PostHeader({
               className="inline-block rounded-full mr-1"
             />
 
-            {post.author.name}
+            {post.author.nickname}
           </div>
           <button
             onClick={onLikeToggle}
