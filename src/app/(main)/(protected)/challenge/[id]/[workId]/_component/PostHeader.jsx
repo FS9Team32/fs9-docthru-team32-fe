@@ -16,7 +16,7 @@ export default function PostHeader({
 }) {
   const isMyPost = currentUser?.id === post.author.id;
   const isAdmin = currentUser?.role === 'ADMIN';
-  const canModify = isMyPost && !isComplete;
+  const canModify = (isMyPost || isAdmin) && !isComplete;
 
   return (
     <header className="mb-6">
