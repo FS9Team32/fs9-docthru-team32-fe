@@ -48,19 +48,13 @@ export default function FeedbackItem({
         <div className="flex-1 min-w-0">
           <div className="flex gap-2">
             <div className="flex shrink-0">
-              {feedback.user.profileImage ? (
-                <Image
-                  src={MemberImg}
-                  alt={feedback.user.nickname}
-                  width={32}
-                  height={32}
-                  className="w-8 h-8 rounded-full object-cover"
-                />
-              ) : (
-                <div className="w-8 h-8 rounded-full bg-yellow-400 flex items-center justify-center text-white font-bold text-xs">
-                  {feedback.user.nickname[0]}
-                </div>
-              )}
+              <Image
+                src={MemberImg}
+                alt={feedback.user.nickname}
+                width={32}
+                height={32}
+                className="w-8 h-8 rounded-full object-cover"
+              />
             </div>
 
             <div className="flex-1 flex justify-between items-start h-7 mb-4">
