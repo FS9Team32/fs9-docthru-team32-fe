@@ -8,6 +8,7 @@ import TextAreaField from '@/components/Field/TextAreaField';
 import CalendarField from '@/components/Field/CalendarField';
 import CategoryField from '@/components/Field/CategoryField';
 import { useAuth } from '@/providers/AuthProvider';
+import { challengeApplicationService } from '@/lib/services/challenge/challengeApplicationService';
 import {
   CATEGORY_LABELS,
   CATEGORY_TEXT,
@@ -82,9 +83,6 @@ const validateUrlExists = async (url) => {
       return true;
     }
 
-    if (errorMessage.includes('failed to fetch')) {
-      return '링크에 접근할 수 없습니다. 링크가 올바른지 확인해주세요.';
-    }
     return true;
   }
 };
@@ -116,24 +114,42 @@ export default function CreateChallengePage() {
 
   const { handleSubmit } = methods;
 
-  const onSubmit = (data) => {
-    const categoryKey = Object.keys(CATEGORY_TEXT).find(
-      (key) => CATEGORY_TEXT[key] === data.category,
-    );
+  const onSubmit = async (data) => {
+    try {
+      const categoryKey = Object.keys(CATEGORY_TEXT).find(
+        (key) => CATEGORY_TEXT[key] === data.category,
+      );
 
-    // 문서 타입을 영어로 변환
-    const documentTypeIndex = DOCUMENT_TYPE_LABELS.indexOf(data.documentType);
-    const finalData = {
-      ...data,
-      originalLink: normalizeUrl(data.originalLink), // URL 정규화
-      category: categoryKey || data.category, // 분야를 키로 변환
-      documentType:
-        documentTypeIndex !== -1
-          ? DOCUMENT_TYPE_VALUES[documentTypeIndex]
-          : data.documentType,
-      maxParticipants: Number(data.maxParticipants),
-    };
-    console.log('제출 데이터:', finalData);
+      // 문서 타입을 영어로 변환
+      const documentTypeIndex = DOCUMENT_TYPE_LABELS.indexOf(data.documentType);
+
+      // 마감일을 ISO string으로 변환
+      const deadlineAt = data.deadlineAt
+        ? new Date(data.deadlineAt).toISOString()
+        : null;
+
+      const finalData = {
+        title: data.title,
+        originalLink: normalizeUrl(data.originalLink),
+        category: categoryKey || data.category,
+        documentType:
+          documentTypeIndex !== -1
+            ? DOCUMENT_TYPE_VALUES[documentTypeIndex]
+            : data.documentType,
+        deadlineAt,
+        maxParticipants: Number(data.maxParticipants),
+        description: data.description,
+      };
+
+      await challengeApplicationService.create(finalData);
+
+      // 성공 시 /my로 리다이렉트
+      router.push('/my');
+    } catch (error) {
+      // 에러 처리
+      console.error('챌린지 신청 실패:', error);
+      alert(error.message || '챌린지 신청에 실패했습니다. 다시 시도해주세요.');
+    }
   };
 
   return (

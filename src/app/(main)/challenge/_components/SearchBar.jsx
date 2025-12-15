@@ -8,6 +8,7 @@ export default function SearchBar({ onSearch }) {
   const [searchValue, setSearchValue] = useState('');
 
   const handleSubmit = (e) => {
+    e.preventDefault();
     onSearch(searchValue);
   };
 

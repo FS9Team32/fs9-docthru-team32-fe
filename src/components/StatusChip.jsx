@@ -1,27 +1,18 @@
 import { cn } from '@/lib/util';
+import {
+  APPLICATION_STATUS_TEXT,
+  APPLICATION_STATUS_COLORS,
+} from '@/constants/challengeConstants';
 
 {
   /*
   사용법
-<StatusChip type="wait" />
-<StatusChip type="accept" />
-<StatusChip type="reject" />
-<StatusChip type="delete" />
+<StatusChip type="PENDING" />
+<StatusChip type="APPROVED" />
+<StatusChip type="REJECTED" />
+<StatusChip type="DELETED" />
   */
 }
-
-const CATEGORY_TEXT = {
-  wait: '승인대기',
-  accept: '신청 승인',
-  reject: '신청 거절',
-  delete: '첼린지 삭제',
-};
-const CATEGORY_COLORS = {
-  wait: 'bg-[#FFFDE7] text-[#F2BC00]',
-  reject: 'bg-[#FFF0F0] text-[#E54946]',
-  accept: 'bg-[#DFF0FF] text-[#4095DE]',
-  delete: 'bg-gray-200 text-gray-500',
-};
 
 export default function StatusChip({
   children,
@@ -29,8 +20,8 @@ export default function StatusChip({
   className: cls,
   ...props
 }) {
-  const chipContent = type ? CATEGORY_TEXT[type] : children;
-  const typeClass = type ? CATEGORY_COLORS[type] : '';
+  const chipContent = type ? APPLICATION_STATUS_TEXT[type] : children;
+  const typeClass = type ? APPLICATION_STATUS_COLORS[type] : '';
 
   const className = cn(
     'px-2 py-1 items-center justify-center rounded-l-sm ',

@@ -139,10 +139,10 @@ export default function Page() {
           </div>
 
           <div className="flex flex-col gap-2 rounded-lg border bg-gray-50 p-3">
-            <StatusChip type="accept" />
-            <StatusChip type="reject" />
-            <StatusChip type="delete" />
-            <StatusChip type="wait" />
+            <StatusChip type="APPROVED" />
+            <StatusChip type="REJECTED" />
+            <StatusChip type="DELETED" />
+            <StatusChip type="PENDING" />
           </div>
           <button className="px-2.5" />
         </div>

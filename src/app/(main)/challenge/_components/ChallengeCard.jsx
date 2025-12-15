@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import TypeChip from '@/components/TypeChip';
 import CategoryChip from '@/components/CategoryChip';
+import { CHALLENGE_STATUS } from '@/constants/challengeConstants';
 import icPerson from '@/assets/ic_person.svg';
 import icDeadline from '@/assets/ic_deadline.svg';
 import icDeadlineCurrent from '@/assets/ic_deadlinecurrent.svg';
@@ -23,8 +24,8 @@ export default function ChallengeCard({ challenge }) {
 
   const isFull = challenge.workCount >= challenge.maxParticipants;
   const currentParticipants = challenge.workCount || 0;
-  const isClosed = challenge.status === 'CLOSED';
-  const isFilled = challenge.status === 'FILLED';
+  const isClosed = challenge.status === CHALLENGE_STATUS.CLOSED;
+  const isFilled = challenge.status === CHALLENGE_STATUS.FILLED;
 
   return (
     <Link
