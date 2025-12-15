@@ -49,7 +49,7 @@ export default function LandingPage() {
           개발자의 새로운 영어 습관
         </p>
         <Link
-          href="/login"
+          href="/challenge"
           passHref
           className="mt-6 font-semibold text-color-gray-800"
         >
@@ -157,7 +157,7 @@ export default function LandingPage() {
       <div className="flex flex-col items-center justify-center mb-24 px-4 text-center">
         <p className="font-semibold text-xl">함께 번역하고 성장하세요!</p>
         <Link
-          href="/login"
+          href="/challenge"
           passHref
           className="mt-8 font-semibold text-color-gray-800"
         >
