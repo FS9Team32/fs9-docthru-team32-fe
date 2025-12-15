@@ -30,9 +30,8 @@ export default function WorkDetail({ params, POST_DATA }) {
 
   const [feedbacks, setFeedbacks] = useState(initialFeedbacks);
 
-  const [likes, setLikes] = useState(
-    POST_DATA._count?.likes ?? POST_DATA.likes ?? 0,
-  );
+  const [likes, setLikes] = useState(POST_DATA.likeCount ?? 0);
+
   const [isLiked, setIsLiked] = useState(POST_DATA.isLiked || false);
 
   const handleEditPost = () => {
