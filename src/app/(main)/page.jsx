@@ -1,9 +1,10 @@
 import Image from 'next/image';
+import Link from 'next/link';
+
 import Lg from '@/assets/lg.png';
 import Md from '@/assets/md.png';
 import Sm from '@/assets/sm.png';
 import MainLogo from '@/assets/logo-main.svg';
-import Link from 'next/link';
 import Button from '@/components/Button';
 import Trophy from '@/assets/trophy.png';
 import Heart from '@/assets/heart.png';
@@ -153,7 +154,6 @@ export default function LandingPage() {
         </div>
       </div>
 
-      {/* 3. 하단 CTA 섹션 */}
       <div className="flex flex-col items-center justify-center mb-24 px-4 text-center">
         <p className="font-semibold text-xl">함께 번역하고 성장하세요!</p>
         <Link
