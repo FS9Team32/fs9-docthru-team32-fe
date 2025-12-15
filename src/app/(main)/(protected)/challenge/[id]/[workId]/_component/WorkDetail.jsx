@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useModal } from '@/providers/ModalProvider';
-
+import { useAuth } from '@/providers/AuthProvider';
 import FeedbackContainer from './FeedbackContainer';
 import PostContent from './PostContent';
 import PostHeader from './PostHeader';
@@ -13,7 +13,7 @@ export default function WorkDetail({ params, POST_DATA }) {
   const router = useRouter();
   const { openModal, closeModal } = useModal();
   const { id, workId } = params;
-
+  const { user: myProfile, isAuthChecking } = useAuth();
   const workerInfo = POST_DATA.worker || {};
 
   const postAuthor = {
@@ -21,29 +21,6 @@ export default function WorkDetail({ params, POST_DATA }) {
     nickname: workerInfo.nickname || '알 수 없음',
     role: workerInfo.role || 'NORMAL',
   };
-
-  const [myProfile, setMyProfile] = useState(null);
-
-  useEffect(() => {
-    const fetchMyInfo = async () => {
-      const token = localStorage.getItem('accessToken');
-      if (!token) return;
-
-      try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/me`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (res.ok) {
-          const data = await res.json();
-          setMyProfile(data.user);
-        }
-      } catch (e) {
-        console.error('내 정보 로딩 실패', e);
-      }
-    };
-
-    fetchMyInfo();
-  }, []);
 
   const initialFeedbacks = (POST_DATA.comments || []).map((comment) => ({
     ...comment,
@@ -67,17 +44,7 @@ export default function WorkDetail({ params, POST_DATA }) {
     if (!token) return alert('로그인이 필요합니다.');
 
     try {
-      const meRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/me`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      if (!meRes.ok) {
-        throw new Error('유저 정보를 불러올 수 없습니다.');
-      }
-
-      const meData = await meRes.json();
-
-      const myRole = meData.user?.role;
+      const myRole = myProfile?.role;
 
       if (myRole === 'ADMIN') {
         openModal(InputModal, {
@@ -115,6 +82,7 @@ export default function WorkDetail({ params, POST_DATA }) {
           },
         });
       } else {
+        // 일반 사용자
         if (confirm('정말 삭제하시겠습니까?')) {
           const res = await fetch(
             `${process.env.NEXT_PUBLIC_API_URL}/works/${workId}`,
@@ -240,7 +208,7 @@ export default function WorkDetail({ params, POST_DATA }) {
   const postForHeader = {
     title: POST_DATA.challenge?.title || '제목 없음',
     content: POST_DATA.content,
-    originalUrl: POST_DATA.challenge?.originalLink || '',
+    originalLink: POST_DATA.challenge?.originalLink || '',
     tags: POST_DATA.challenge?.category ? [POST_DATA.challenge.category] : [],
     documentType: POST_DATA.challenge?.documentType || 'official',
     author: {
