@@ -103,7 +103,6 @@ const Header = () => {
                   </button>
                   {isNotificationOpen && (
                     <NotificationDropdown items={mockNotifications} />
-                    // items={[]} />
                   )}
                 </div>
               )}
