@@ -47,7 +47,11 @@ export default function LandingPage() {
           <br />
           개발자의 새로운 영어 습관
         </p>
-        <Link href="/login" className="mt-6 font-semibold text-color-gray-800">
+        <Link
+          href="/login"
+          passHref
+          className="mt-6 font-semibold text-color-gray-800"
+        >
           <Button variant="outline">번역 시작하기</Button>
         </Link>
       </div>
@@ -152,7 +156,11 @@ export default function LandingPage() {
       {/* 3. 하단 CTA 섹션 */}
       <div className="flex flex-col items-center justify-center mb-24 px-4 text-center">
         <p className="font-semibold text-xl">함께 번역하고 성장하세요!</p>
-        <Link href="/login" className="mt-8 font-semibold text-color-gray-800">
+        <Link
+          href="/login"
+          passHref
+          className="mt-8 font-semibold text-color-gray-800"
+        >
           <Button variant="solid">번역 시작하기</Button>
         </Link>
       </div>
