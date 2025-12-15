@@ -22,6 +22,8 @@ export default function MyChallengeContainer() {
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchKeyword, setSearchKeyword] = useState('');
+  const [filterValue, setFilterValue] = useState('ALL');
+  const [sortValue, setSortValue] = useState('APPLY_ASC');
 
   useEffect(() => {
     if (activeTab !== '신청한 챌린지') {
@@ -79,14 +81,38 @@ export default function MyChallengeContainer() {
   const filteredApplications = useMemo(() => {
     let result = [...applications];
 
+    // 검색 필터
     if (searchKeyword.trim()) {
       result = result.filter((application) =>
         application.title.toLowerCase().includes(searchKeyword.toLowerCase()),
       );
     }
 
+    // 상태 필터
+    if (filterValue !== 'ALL') {
+      result = result.filter(
+        (application) => application.status === filterValue,
+      );
+    }
+
+    // 정렬
+    result.sort((a, b) => {
+      switch (sortValue) {
+        case 'APPLY_ASC':
+          return new Date(a.createdAt) - new Date(b.createdAt);
+        case 'APPLY_DESC':
+          return new Date(b.createdAt) - new Date(a.createdAt);
+        case 'DEADLINE_ASC':
+          return new Date(a.deadlineAt) - new Date(b.deadlineAt);
+        case 'DEADLINE_DESC':
+          return new Date(b.deadlineAt) - new Date(a.deadlineAt);
+        default:
+          return 0;
+      }
+    });
+
     return result;
-  }, [applications, searchKeyword]);
+  }, [applications, searchKeyword, filterValue, sortValue]);
 
   const itemsPerPage = 10;
   const totalPages = Math.ceil(filteredApplications.length / itemsPerPage);
@@ -105,10 +131,14 @@ export default function MyChallengeContainer() {
 
   const handleFilterSelect = (value) => {
     console.log('필터:', value);
+    setFilterValue(value);
+    setCurrentPage(1);
   };
 
   const handleSortSelect = (value) => {
     console.log('정렬:', value);
+    setSortValue(value);
+    setCurrentPage(1);
   };
 
   const handlePageChange = (page) => {
@@ -137,8 +167,8 @@ export default function MyChallengeContainer() {
               <div className="mb-6 flex items-center gap-4">
                 <SearchBar onSearch={handleSearch} />
                 <ListDropdown
-                  filterValue="ALL"
-                  sortValue="APPLY_ASC"
+                  filterValue={filterValue}
+                  sortValue={sortValue}
                   onFilterSelect={handleFilterSelect}
                   onSortSelect={handleSortSelect}
                 />
