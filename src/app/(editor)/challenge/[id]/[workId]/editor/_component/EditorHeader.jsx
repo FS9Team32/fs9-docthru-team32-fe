@@ -3,13 +3,7 @@ import Button from '@/components/Button';
 import Image from 'next/image';
 import exitImg from '@/assets/icon_exit.svg';
 import logoImg from '@/assets/logo-main.svg';
-export default function Header({
-  title,
-  onSave,
-  onSubmit,
-  onCancel,
-  onLoadClick,
-}) {
+export default function Header({ title, onSave, onSubmit, onCancel }) {
   return (
     <div className="w-full max-w-4xl mt-14 justify-between items-center mb-6 px-4">
       <div className="flex justify-between">
