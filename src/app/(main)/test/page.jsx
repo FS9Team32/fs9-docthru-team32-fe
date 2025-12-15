@@ -1,5 +1,5 @@
 'use client';
-
+import { useState } from 'react';
 import Button from '@/components/Button';
 import LinkButton from '@/components/LinkButton';
 import CategoryChip from '@/components/CategoryChip';
@@ -14,7 +14,9 @@ import InputModal from '@/components/modal/InputModal';
 
 export default function Page() {
   const { openModal, closeModal } = useModal();
-
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const [filter, setFilter] = useState('ALL');
+  const [sort, setSort] = useState('APPLY_ASC');
   const handleOpenModal = () => {
     openModal(InputModal, {
       onClose: closeModal,
@@ -40,7 +42,11 @@ export default function Page() {
         <div className="flex flex-wrap items-start gap-8">
           {/* 1-2. 카테고리 선택 드롭다운 (파일: CategoryDropdown.jsx) */}
           <div className="w-80 rounded-lg border bg-gray-50 p-3">
-            <CategoryDropdown />
+            <CategoryDropdown
+              category={['test', '1', '2', '3']}
+              value={selectedCategory}
+              onChange={setSelectedCategory}
+            />
           </div>
           {/* 1-1. 프로필 메뉴 드롭다운 (파일: ProfileDropdown.jsx) */}
           <div className="w-64 rounded-lg border bg-gray-50 p-3">
@@ -48,8 +54,13 @@ export default function Page() {
           </div>
 
           {/* 1-3. 상태 필터 및 정렬 드롭다운 (파일: ListDropdown.jsx) */}
-          <div className="w-64 rounded-lg border bg-gray-50 p-3">
-            <ListDropdown />
+          <div className="w-64 rounded-lg border bg-gray-50 p-3 space-y-2">
+            <ListDropdown
+              filterValue={filter}
+              sortValue={sort}
+              onFilterSelect={setFilter}
+              onSortSelect={setSort}
+            />
           </div>
 
           {/* 1-4. 액션 드롭다운 (파일: CommentDropdown.jsx) */}
@@ -130,10 +141,10 @@ export default function Page() {
           </div>
 
           <div className="flex flex-col gap-2 rounded-lg border bg-gray-50 p-3">
-            <StatusChip type="accept" />
-            <StatusChip type="reject" />
-            <StatusChip type="delete" />
-            <StatusChip type="wait" />
+            <StatusChip type="APPROVED" />
+            <StatusChip type="REJECTED" />
+            <StatusChip type="DELETED" />
+            <StatusChip type="PENDING" />
           </div>
           <button className="px-2.5" />
         </div>

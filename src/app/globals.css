@@ -18,3 +18,5 @@
   --color-brand-light: #f1f2f5;
   --color-error: #eb3e3e;
 }
+
+@plugin "@tailwindcss/typography";

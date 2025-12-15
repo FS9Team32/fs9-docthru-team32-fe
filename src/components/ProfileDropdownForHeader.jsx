@@ -59,12 +59,11 @@ export default function ProfileDropdownForHeader({
               className="rounded-full"
             />
             <div className="flex flex-col">
-              <span className="text-[14px] font-medium text-gray-500">
+              <span className="text-[14px] font-medium text-gray-800">
                 {nickname}
               </span>
-              <span
-                className={`text-[14px] ${role === 'PRO' ? 'font-medium' : 'text-gray-500'}`}
-              >
+
+              <span className="text-[14px] text-gray-500">
                 {ROLE_LABELS[role] || '회원'}
               </span>
             </div>
