@@ -4,21 +4,45 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '@/providers/AuthProvider';
+import { useState } from 'react';
 
 import imgLogo from '@/assets/logo-main.svg';
 import icBell from '@/assets/icon_bell.svg';
 
 import ProfileDropdownForHeader from '@/components/ProfileDropdownForHeader';
+import NotificationDropdown from '@/components/NotificationDropdown';
+
+// 목업 알림 데이터
+const mockNotifications = [
+  {
+    id: 1,
+    message: "'신청한 챌린지 이름'이 승인/거절되었어요",
+    date: '2025.12.15',
+  },
+  {
+    id: 2,
+    message: "'신청한 챌린지 이름'에 작업물이 추가되었어요",
+    date: '2025.12.15',
+  },
+  {
+    id: 3,
+    message: "'신청한 챌린지 이름'이 마감되었어요",
+    date: '2025.12.15',
+  },
+];
 
 const Header = () => {
   const { user, logout } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
+  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
     router.push('/');
   };
+
+  const handleToggleNotification = () => setIsNotificationOpen((prev) => !prev);
 
   const baseTab =
     'px-[17px] py-[21px] text-[16px] font-semibold transition-colors';
@@ -69,9 +93,18 @@ const Header = () => {
           {user ? (
             <>
               {!isAdmin && (
-                <button className="rounded-full p-1 hover:bg-gray-100">
-                  <Image src={icBell} alt="알림" width={24} height={24} />
-                </button>
+                <div className="relative">
+                  <button
+                    className="rounded-full p-1 hover:bg-gray-100"
+                    onClick={handleToggleNotification}
+                    aria-label="알림"
+                  >
+                    <Image src={icBell} alt="알림" width={24} height={24} />
+                  </button>
+                  {isNotificationOpen && (
+                    <NotificationDropdown items={mockNotifications} />
+                  )}
+                </div>
               )}
 
               <ProfileDropdownForHeader
