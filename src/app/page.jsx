@@ -19,7 +19,7 @@ import Landing3Sm from '@/assets/landing3_sm.png';
 export default function LandingPage() {
   return (
     <>
-      <div className="relative ml-[calc(-50vw+50%)] w-screen left-0 h-[500px] flex flex-col items-center justify-center overflow-hidden">
+      <div className="relative w-full h-125 flex flex-col items-center justify-center">
         <Image
           src={Lg}
           alt="Docthru Banner"
