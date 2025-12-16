@@ -1,65 +1,119 @@
 'use client';
 
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-const AuthContext = createContext(null);
+import {
+  loginAction,
+  signupAction,
+  checkAndRefreshAuth,
+  clearServerSideTokens,
+} from '@/lib/action/auth';
 
-function setCookie(name, value, days) {
-  let expires = '';
-  if (days) {
-    const date = new Date();
-    date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
-    expires = '; expires=' + date.toUTCString();
+import { userService } from '@/lib/services/userService';
+import { authService } from '@/lib/services/authService';
+
+const AuthContext = createContext({
+  user: null,
+  login: async () => {},
+  logout: async () => {},
+  signup: async () => {},
+  isAuthChecking: true,
+});
+
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
   }
+  return context;
+};
 
-  document.cookie = name + '=' + (value || '') + expires + '; path=/';
-}
-
-function deleteCookie(name) {
-  document.cookie = name + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-}
-
-export function AuthProvider({ children }) {
+export default function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isAuthChecking, setIsAuthChecking] = useState(true);
   const router = useRouter();
+  const getUser = async () => {
+    try {
+      const userData = await userService.getUser();
+      setUser(userData);
+    } catch (error) {
+      console.error('사용자 정보 로드 실패:', error);
+      setUser(null);
+    }
+  };
+
+  const signup = async (nickname, email, password, confirmPassword) => {
+    const { userData, success, error } = await signupAction(
+      nickname,
+      email,
+      password,
+      confirmPassword,
+    );
+
+    if (!success) {
+      throw new Error(error || '회원가입 처리 중 알 수 없는 오류');
+    }
+    setUser(userData);
+    router.push('/');
+
+    return { success: true };
+  };
+  const login = async (email, password) => {
+    const { userData, success, error } = await loginAction(email, password);
+
+    if (!success) {
+      throw new Error(error || '로그인 실패');
+    }
+
+    setUser(userData);
+    router.push('/');
+
+    return { success: true };
+  };
+
+  const logout = async () => {
+    try {
+      await authService.logout();
+      await clearServerSideTokens();
+
+      setUser(null);
+      router.push('/login');
+    } catch (error) {}
+  };
 
   useEffect(() => {
-    const restoreUser = () => {
-      const storedUser = localStorage.getItem('user');
-      if (storedUser) {
-        setUser(JSON.parse(storedUser));
+    async function initializeAuth() {
+      setIsAuthChecking(true);
+      try {
+        const isValid = await checkAndRefreshAuth();
+
+        if (isValid) {
+          await getUser();
+        } else {
+          setUser(null);
+        }
+      } catch (error) {
+        setUser(null);
+      } finally {
+        setIsAuthChecking(false);
       }
-      setIsLoading(false);
-    };
-    setTimeout(restoreUser, 0);
+    }
+
+    initializeAuth();
   }, []);
 
-  const login = ({ user, accessToken }) => {
-    localStorage.setItem('user', JSON.stringify(user));
-    localStorage.setItem('accessToken', accessToken);
-
-    setCookie('accessToken', accessToken, 1);
-
-    setUser(user);
-  };
-
-  const logout = () => {
-    localStorage.removeItem('user');
-    localStorage.removeItem('accessToken');
-
-    deleteCookie('accessToken');
-
-    setUser(null);
-    router.push('/login');
-  };
-
   return (
-    <AuthContext.Provider value={{ user, login, logout, isLoading }}>
-      {isLoading ? <div>Loading...</div> : children}
+    <AuthContext.Provider
+      value={{
+        user,
+        login,
+        logout,
+        signup,
+        isAuthChecking,
+      }}
+    >
+      {children}
     </AuthContext.Provider>
   );
 }
-
-export const useAuth = () => useContext(AuthContext);

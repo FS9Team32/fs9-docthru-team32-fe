@@ -24,11 +24,7 @@ export default function SignupPage() {
     }
 
     try {
-      const response = await authService.signup({ nickname, email, password });
-
-      const { accessToken, ...user } = response;
-
-      login({ user, accessToken });
+      await login(nickname, email, password, confirmPassword);
 
       setIsPopupOpen(true);
       return { success: true };
