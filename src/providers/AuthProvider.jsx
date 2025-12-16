@@ -38,7 +38,6 @@ export default function AuthProvider({ children }) {
       const userData = await userService.getUser();
       setUser(userData);
     } catch (error) {
-      console.error('사용자 정보 로드 실패:', error);
       setUser(null);
     }
   };

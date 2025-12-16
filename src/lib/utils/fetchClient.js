@@ -28,7 +28,7 @@ export const defaultFetch = async (url, options = {}) => {
 };
 export const tokenFetch = async (url, options = {}) => {
   const baseURL = process.env.NEXT_PUBLIC_API_URL;
-  const token = await getServerSideToken('accessToken'); // accessToken 확인
+  const token = await getServerSideToken('accessToken');
 
   if (!token) {
     throw new Error('Access Token is missing');
@@ -37,7 +37,7 @@ export const tokenFetch = async (url, options = {}) => {
   const defaultOptions = {
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`, // Bearer 토큰 추가
+      Authorization: `Bearer ${token}`,
     },
     cache: 'no-store',
   };
@@ -53,9 +53,7 @@ export const tokenFetch = async (url, options = {}) => {
 
   let response = await fetch(`${baseURL}${url}`, mergedOptions);
 
-  // 토큰 만료 시 자동 갱신 시도
   if (response.status === 401) {
-    // 토큰 만료 시
     const refreshToken = await getServerSideToken('refreshToken');
     const refreshResponse = await fetch(`${baseURL}/auth/token/refresh`, {
       method: 'POST',
@@ -66,9 +64,8 @@ export const tokenFetch = async (url, options = {}) => {
 
     if (refreshResponse.ok) {
       const { accessToken: newAccessToken } = await refreshResponse.json();
-      await updateAccessToken(newAccessToken); // 새 토큰 업데이트
+      await updateAccessToken(newAccessToken);
 
-      // 새 토큰으로 재시도
       response = await fetch(`${baseURL}${url}`, mergedOptions);
     } else {
       throw new Error('Token refresh failed');
@@ -82,8 +79,8 @@ export const tokenFetch = async (url, options = {}) => {
 
   const contentType = response.headers.get('content-type');
   if (contentType && contentType.includes('application/json')) {
-    return response.json(); // JSON 응답 반환
+    return response.json();
   }
 
-  return { status: response.status, ok: response.ok }; // JSON이 아닌 경우 상태 코드와 OK 플래그 반환
+  return { status: response.status, ok: response.ok };
 };

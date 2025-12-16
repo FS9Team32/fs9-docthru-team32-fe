@@ -132,21 +132,17 @@ export async function checkAndRefreshAuth() {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get('accessToken')?.value;
   const refreshToken = cookieStore.get('refreshToken')?.value;
-  console.log('accessToken=======', accessToken);
-  console.log('refreshToken=======', refreshToken);
 
   if (accessToken) {
     return true;
   }
 
   if (!refreshToken) {
-    console.log('refreshToken-------', refreshToken);
     return false;
   }
 
   try {
     const baseURL = process.env.NEXT_PUBLIC_API_URL;
-    console.log('baseURL======', baseURL);
     const response = await fetch(`${baseURL}/auth/token/refresh`, {
       method: 'POST',
       headers: {
@@ -166,7 +162,6 @@ export async function checkAndRefreshAuth() {
 
     return false;
   } catch (error) {
-    console.log('error', error);
     return false;
   }
 }
