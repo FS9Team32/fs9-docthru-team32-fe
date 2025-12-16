@@ -4,20 +4,65 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '@/providers/AuthProvider';
+import { useState, useEffect } from 'react';
+import { notificationService } from '@/lib/services/notificationService';
 
 import imgLogo from '@/assets/logo-main.svg';
 import icBell from '@/assets/icon_bell.svg';
 
 import ProfileDropdownForHeader from '@/components/ProfileDropdownForHeader';
+import NotificationDropdown from '@/components/NotificationDropdown';
 
 const Header = () => {
   const { user, logout } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
+  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+  const [isLoadingNotifications, setIsLoadingNotifications] = useState(false);
 
   const handleLogout = () => {
     logout();
     router.push('/');
+  };
+
+  const handleToggleNotification = () => setIsNotificationOpen((prev) => !prev);
+
+  useEffect(() => {
+    if (isNotificationOpen && user && user.role !== 'ADMIN') {
+      const fetchNotifications = async () => {
+        setIsLoadingNotifications(true);
+        try {
+          console.log('[알림] API 호출 시작:', '/users/me/notifications');
+          const response = await notificationService.getList();
+          console.log('[알림] API 응답 전체:', response);
+          const data = response?.list || [];
+          setNotifications(Array.isArray(data) ? data : []);
+        } catch (err) {
+          console.error('[알림] 알림 목록 조회 실패:', err);
+          setNotifications([]);
+        } finally {
+          setIsLoadingNotifications(false);
+        }
+      };
+      fetchNotifications();
+    }
+  }, [isNotificationOpen, user]);
+
+  const handleNotificationUpdate = () => {
+    if (isNotificationOpen && user && user.role !== 'ADMIN') {
+      const fetchNotifications = async () => {
+        try {
+          const response = await notificationService.getList();
+          const data = response?.list || [];
+          setNotifications(Array.isArray(data) ? data : []);
+        } catch (err) {
+          console.error('알림 목록 조회 실패:', err);
+          setNotifications([]);
+        }
+      };
+      fetchNotifications();
+    }
   };
 
   const baseTab =
@@ -69,9 +114,22 @@ const Header = () => {
           {user ? (
             <>
               {!isAdmin && (
-                <button className="rounded-full p-1 hover:bg-gray-100">
-                  <Image src={icBell} alt="알림" width={24} height={24} />
-                </button>
+                <div className="relative">
+                  <button
+                    className="rounded-full p-1 hover:bg-gray-100"
+                    onClick={handleToggleNotification}
+                    aria-label="알림"
+                  >
+                    <Image src={icBell} alt="알림" width={24} height={24} />
+                  </button>
+                  {isNotificationOpen && (
+                    <NotificationDropdown
+                      items={notifications}
+                      isLoading={isLoadingNotifications}
+                      onUpdate={handleNotificationUpdate}
+                    />
+                  )}
+                </div>
               )}
 
               <ProfileDropdownForHeader
