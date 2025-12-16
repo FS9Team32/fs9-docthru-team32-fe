@@ -9,26 +9,35 @@ import Header from './EditorHeader';
 import SaveListModal from './SaveListModal';
 import OpenOriginal from './OpenOriginal';
 import listImg from '@/assets/icon_list.svg';
+
 const STORAGE_KEY = 'DOCTHRU_EDITOR_DRAFTS';
+
+function getCookie(name) {
+  if (typeof document === 'undefined') return null;
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(';').shift();
+  return null;
+}
+
 const fetchChallengeInfo = async (id) => {
   try {
+    const token = getCookie('accessToken');
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/challenges/${id}`,
       {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+          Authorization: token ? `Bearer ${token}` : '',
         },
       },
     );
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(
-        `API 오류 발생: [${response.status}] ${response.statusText} - ${errorText}`,
-      );
-    }
 
+    if (!response.ok) {
+      console.warn(`Challenge fetch error: ${response.status}`);
+      return null;
+    }
     return await response.json();
   } catch (error) {
     console.error('상세 에러 로그:', error);
@@ -38,17 +47,20 @@ const fetchChallengeInfo = async (id) => {
 
 const fetchWorkInfo = async (workId) => {
   try {
+    const token = getCookie('accessToken');
+    if (!token) return null;
+
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/works/${workId}`,
-
       {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+          Authorization: `Bearer ${token}`,
         },
       },
     );
+
     if (!response.ok) throw new Error('작업물을 불러오는데 실패했습니다.');
     const data = await response.json();
     return data;
@@ -61,18 +73,14 @@ const fetchWorkInfo = async (workId) => {
 export default function EditorForm() {
   const router = useRouter();
   const params = useParams();
-
   const challengeId = params?.id;
   const workId = params?.workId;
-
   const isEditMode = !!workId;
 
   const [originalLink, setOriginalLink] = useState('');
   const [showOriginal, setShowOriginal] = useState(false);
-
   const [content, setContent] = useState('');
   const [challengeTitle, setChallengeTitle] = useState('');
-
   const [showLoadAlert, setShowLoadAlert] = useState(false);
   const [showListModal, setShowListModal] = useState(false);
   const [drafts, setDrafts] = useState([]);
@@ -87,27 +95,25 @@ export default function EditorForm() {
     }
   }, [isEditMode, workId]);
 
-  // 임시저장 로드 (write 페이지만)
   useEffect(() => {
     if (isEditMode) return;
 
-    let timer;
-    const savedData = localStorage.getItem(STORAGE_KEY);
-    if (savedData) {
-      timer = setTimeout(() => {
-        const currentSavedData = localStorage.getItem(STORAGE_KEY);
-        if (currentSavedData) {
-          const parsedData = JSON.parse(currentSavedData);
+    const timer = setTimeout(() => {
+      const savedData = localStorage.getItem(STORAGE_KEY);
+      if (savedData) {
+        try {
+          const parsedData = JSON.parse(savedData);
           if (Array.isArray(parsedData) && parsedData.length > 0) {
             setDrafts(parsedData);
             setShowLoadAlert(true);
           }
+        } catch (e) {
+          console.error('임시저장 데이터 파싱 실패', e);
         }
-      }, 0);
-    }
-    return () => {
-      if (timer) clearTimeout(timer);
-    };
+      }
+    }, 0);
+
+    return () => clearTimeout(timer);
   }, [isEditMode]);
 
   useEffect(() => {
@@ -122,8 +128,7 @@ export default function EditorForm() {
   }, [challengeId]);
 
   const handleSaveDraft = () => {
-    if (!content || content === '<p></p>') return alert('내용이 비어있습니다.');
-
+    if (!content || content === '') return alert('내용이 비어있습니다.');
     const newDraft = {
       id: Date.now(),
       challengeId: challengeId,
@@ -131,7 +136,6 @@ export default function EditorForm() {
       content: content,
       date: new Date().toLocaleString(),
     };
-
     const updatedDrafts = [newDraft, ...drafts];
     setDrafts(updatedDrafts);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedDrafts));
@@ -160,14 +164,15 @@ export default function EditorForm() {
   };
 
   const handleSubmit = async () => {
-    if (!content || content === '<p></p>') return alert('내용을 입력해주세요.');
+    if (!content || content === '') return alert('내용을 입력해주세요.');
 
     const url = isEditMode
       ? `${process.env.NEXT_PUBLIC_API_URL}/works/${workId}`
       : `${process.env.NEXT_PUBLIC_API_URL}/challenges/${challengeId}/works`;
 
     const method = isEditMode ? 'PATCH' : 'POST';
-    const token = localStorage.getItem('accessToken');
+
+    const token = getCookie('accessToken');
 
     if (!token) {
       alert('로그인이 필요합니다.');
@@ -185,9 +190,10 @@ export default function EditorForm() {
       });
 
       const data = await response.json();
+
       if (response.ok) {
         if (!isEditMode) localStorage.removeItem(STORAGE_KEY);
-        alert(isEditMode ? '수정이 완료되었습니다!' : '제출되었습니다! ');
+        alert(isEditMode ? '수정이 완료되었습니다!' : '제출되었습니다!');
         router.push(`/challenge/${challengeId}/${isEditMode ? workId : ''}`);
       } else {
         alert(data.message || '실패했습니다.');
@@ -206,32 +212,19 @@ export default function EditorForm() {
   };
 
   return (
-    <div className="relative w-full min-h-screen bg-gray-50 flex flex-col overflow-x-hidden">
-      <div
-        className={`flex flex-col transition-all ${
-          showOriginal
-            ? 'w-3/5 ml-0 mr-auto px-6'
-            : 'w-full max-w-4xl mx-auto px-4'
-        }`}
-      >
-        <Header
-          title={isEditMode ? `${challengeTitle} (수정중)` : challengeTitle}
-          onSave={handleSaveDraft}
-          onSubmit={handleSubmit}
-          onCancel={handleCancel}
-        />
+    <div className="w-full h-screen flex flex-col bg-white relative">
+      <Header
+        title={challengeTitle}
+        onSave={handleSaveDraft}
+        onSubmit={handleSubmit}
+        onCancel={handleCancel}
+        onListClick={() => setShowListModal(true)}
+        onOriginalClick={() => setShowOriginal(true)}
+      />
 
-        <div className="w-full flex flex-col bg-white rounded-lg shadow-sm overflow-hidden min-h-[calc(100vh-100px)]">
-          <RichEditor content={content} onChange={setContent} />
-        </div>
+      <div className="flex-1 overflow-hidden relative">
+        <RichEditor content={content} onChange={setContent} />
       </div>
-
-      {showLoadAlert && (
-        <LoadAlert
-          onConfirm={handleConfirmAlert}
-          onClose={() => setShowLoadAlert(false)}
-        />
-      )}
 
       {!showOriginal && (
         <button
@@ -245,11 +238,12 @@ export default function EditorForm() {
         </button>
       )}
 
-      <OpenOriginal
-        isOpen={showOriginal}
-        link={originalLink}
-        onClose={() => setShowOriginal(false)}
-      />
+      {showLoadAlert && (
+        <LoadAlert
+          onClose={() => setShowLoadAlert(false)}
+          onConfirm={handleConfirmAlert}
+        />
+      )}
 
       <SaveListModal
         isOpen={showListModal}
@@ -257,6 +251,12 @@ export default function EditorForm() {
         drafts={drafts}
         onSelect={handleSelectDraft}
         onDelete={handleDeleteDraft}
+      />
+
+      <OpenOriginal
+        isOpen={showOriginal}
+        link={originalLink}
+        onClose={() => setShowOriginal(false)}
       />
     </div>
   );

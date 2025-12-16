@@ -9,13 +9,21 @@ import PostContent from './PostContent';
 import PostHeader from './PostHeader';
 import InputModal from '@/components/modal/InputModal';
 
+function getCookie(name) {
+  if (typeof document === 'undefined') return null;
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(';').shift();
+  return null;
+}
+
 export default function WorkDetail({ params, POST_DATA }) {
   const router = useRouter();
   const { openModal, closeModal } = useModal();
   const { id, workId } = params;
   const { user: myProfile, isAuthChecking } = useAuth();
-  const workerInfo = POST_DATA.worker || {};
 
+  const workerInfo = POST_DATA.worker || {};
   const postAuthor = {
     id: workerInfo.id || 0,
     nickname: workerInfo.nickname || '알 수 없음',
@@ -29,9 +37,7 @@ export default function WorkDetail({ params, POST_DATA }) {
   }));
 
   const [feedbacks, setFeedbacks] = useState(initialFeedbacks);
-
   const [likes, setLikes] = useState(POST_DATA.likeCount ?? 0);
-
   const [isLiked, setIsLiked] = useState(POST_DATA.isLiked || false);
 
   const handleEditPost = () => {
@@ -39,7 +45,8 @@ export default function WorkDetail({ params, POST_DATA }) {
   };
 
   const handleDeletePost = async () => {
-    const token = localStorage.getItem('accessToken');
+    const token = getCookie('accessToken');
+
     if (!token) return alert('로그인이 필요합니다.');
 
     try {
@@ -81,7 +88,6 @@ export default function WorkDetail({ params, POST_DATA }) {
           },
         });
       } else {
-        // 일반 사용자
         if (confirm('정말 삭제하시겠습니까?')) {
           const res = await fetch(
             `${process.env.NEXT_PUBLIC_API_URL}/works/${workId}`,
@@ -107,19 +113,27 @@ export default function WorkDetail({ params, POST_DATA }) {
   };
 
   const handleToggleLike = async () => {
-    const token = localStorage.getItem('accessToken');
+    const token = getCookie('accessToken');
+    if (!token) return alert('로그인이 필요합니다.');
+
     try {
       if (isLiked) {
-        await fetch(`works/${workId}/likes`, {
-          method: 'DELETE',
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/works/${workId}/likes`,
+          {
+            method: 'DELETE',
+            headers: { Authorization: `Bearer ${token}` },
+          },
+        );
         setLikes((prev) => prev - 1);
       } else {
-        await fetch(`works/${workId}/likes`, {
-          method: 'POST',
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/works/${workId}/likes`,
+          {
+            method: 'POST',
+            headers: { Authorization: `Bearer ${token}` },
+          },
+        );
         setLikes((prev) => prev + 1);
       }
       setIsLiked((prev) => !prev);
@@ -130,7 +144,8 @@ export default function WorkDetail({ params, POST_DATA }) {
 
   const handleCreateFeedback = async (text) => {
     if (POST_DATA.challenge?.status === 'CLOSED') return;
-    const token = localStorage.getItem('accessToken');
+
+    const token = getCookie('accessToken');
     if (!token) return alert('로그인이 필요합니다.');
 
     try {
@@ -163,7 +178,9 @@ export default function WorkDetail({ params, POST_DATA }) {
   };
 
   const handleUpdateFeedback = (id, newContent) => {
-    const token = localStorage.getItem('accessToken');
+    const token = getCookie('accessToken');
+    if (!token) return alert('로그인이 필요합니다.');
+
     fetch(`${process.env.NEXT_PUBLIC_API_URL}/comments/${id}`, {
       method: 'PATCH',
       headers: {
@@ -185,7 +202,7 @@ export default function WorkDetail({ params, POST_DATA }) {
   };
 
   const handleDeleteFeedback = async (id) => {
-    const token = localStorage.getItem('accessToken');
+    const token = getCookie('accessToken');
     if (!token) return alert('로그인이 필요합니다.');
 
     if (confirm('삭제하시겠습니까?')) {
@@ -219,31 +236,29 @@ export default function WorkDetail({ params, POST_DATA }) {
   };
 
   return (
-    <main className="min-h-screen bg-white py-10 px-4">
-      <div className="max-w-3xl mx-auto">
-        <section className="mb-12">
-          <PostHeader
-            post={postForHeader}
-            currentUser={myProfile}
-            isCompleted={POST_DATA.challenge?.status === 'CLOSED'}
-            isLiked={isLiked}
-            onLikeToggle={handleToggleLike}
-            onEdit={handleEditPost}
-            onDelete={handleDeletePost}
-          />
-          <PostContent content={POST_DATA.content} />
-        </section>
+    <div className="w-full max-w-[1200px] mx-auto p-4 md:p-6 lg:p-8">
+      <PostHeader
+        post={postForHeader}
+        currentUser={myProfile}
+        isComplete={POST_DATA.challenge?.status === 'CLOSED'}
+        isLiked={isLiked}
+        onLikeToggle={handleToggleLike}
+        onEdit={handleEditPost}
+        onDelete={handleDeletePost}
+      />
 
-        <FeedbackContainer
-          feedbacks={feedbacks}
-          currentUser={myProfile}
-          isCompleted={POST_DATA.status === 'COMPLETED'}
-          onCreate={handleCreateFeedback}
-          onUpdate={handleUpdateFeedback}
-          onDelete={handleDeleteFeedback}
-          onLoadMore={handleLoadMore}
-        />
+      <div className="mt-8 mb-12">
+        <PostContent content={POST_DATA.content} />
       </div>
-    </main>
+
+      <FeedbackContainer
+        feedbacks={feedbacks}
+        onCreate={handleCreateFeedback}
+        onUpdate={handleUpdateFeedback}
+        onDelete={handleDeleteFeedback}
+        onLoadMore={handleLoadMore}
+        currentUser={myProfile}
+      />
+    </div>
   );
 }
