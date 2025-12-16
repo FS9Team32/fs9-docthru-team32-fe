@@ -11,6 +11,7 @@ import {
 } from '@/lib/action/auth';
 
 import { userService } from '@/lib/services/userService';
+import { authService } from '@/lib/services/authService';
 
 const AuthContext = createContext({
   user: null,
@@ -37,7 +38,6 @@ export default function AuthProvider({ children }) {
       const userData = await userService.getUser();
       setUser(userData);
     } catch (error) {
-      console.error('사용자 정보 로드 실패:', error);
       setUser(null);
     }
   };
@@ -73,6 +73,7 @@ export default function AuthProvider({ children }) {
 
   const logout = async () => {
     try {
+      await authService.logout();
       await clearServerSideTokens();
 
       setUser(null);

@@ -104,11 +104,11 @@ export default function CreateChallengePage() {
     },
   });
 
-  useEffect(() => {
-    if (!isLoading && !user) {
-      router.replace('/login');
-    }
-  }, [isLoading, user, router]);
+  // useEffect(() => {
+  //   if (!isLoading && !user) {
+  //     router.replace('/login');
+  //   }
+  // }, [isLoading, user, router]);
 
   if (isLoading || !user) return null;
 
