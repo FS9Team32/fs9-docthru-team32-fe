@@ -13,14 +13,7 @@ export default function LoginPage() {
 
   const handleLogin = async ({ email, password }) => {
     try {
-      const res = await authService.login({ email, password });
-
-      const { accessToken, ...user } = res;
-
-      login({
-        user: user,
-        accessToken: accessToken,
-      });
+      await login(email, password);
       router.push('/challenge');
       return { success: true };
     } catch (err) {
