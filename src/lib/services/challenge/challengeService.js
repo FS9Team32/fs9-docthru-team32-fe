@@ -1,5 +1,6 @@
-import { defaultFetch } from '@/lib/utils/fetchClient';
+import { defaultFetch, tokenFetch } from '@/lib/utils/fetchClient';
 
 export const challengeService = {
   getList: () => defaultFetch('/challenges'),
+  getMyChallenges: () => tokenFetch('/users/me/challenge'),
 };
