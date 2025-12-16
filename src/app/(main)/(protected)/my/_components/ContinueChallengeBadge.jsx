@@ -7,7 +7,7 @@ export default function ContinueChallengeBadge({ onClick }) {
   return (
     <button
       onClick={onClick}
-      className="flex items-center gap-2 rounded-full border border-gray-300 bg-white px-4 py-2.5 transition-colors hover:bg-gray-50"
+      className="flex items-center gap-2 rounded-full border border-gray-300 bg-white px-4 py-2.5 transition-colors hover:bg-gray-50 cursor-pointer"
     >
       <span className="text-sm font-medium text-gray-700">도전 계속하기</span>
       <Image

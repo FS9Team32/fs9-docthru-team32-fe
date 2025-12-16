@@ -33,7 +33,6 @@ export default function MyChallengeCard({ challenge, type = 'inProgress' }) {
   const isFilled = challenge.status === CHALLENGE_STATUS.FILLED;
 
   const handleViewMyWork = (e) => {
-    e.preventDefault();
     const workId = challenge.myWorkId || challenge.userId;
     if (workId) {
       router.push(`/works/${workId}`);
@@ -43,14 +42,13 @@ export default function MyChallengeCard({ challenge, type = 'inProgress' }) {
   };
 
   const handleContinueChallenge = (e) => {
-    e.preventDefault();
     router.push(`/challenge/${challenge.id}/editor`);
   };
 
   return (
     <Link
       href={`/challenge/${challenge.id}`}
-      className="block rounded-lg bg-white p-6 transition-colors hover:bg-gray-50"
+      className="block rounded-lg bg-white p-6 transition-colors hover:bg-gray-50 cursor-default"
       style={{ border: '3px solid #262626' }}
     >
       {/* 상태 배지 (모집 완료 또는 마감) */}

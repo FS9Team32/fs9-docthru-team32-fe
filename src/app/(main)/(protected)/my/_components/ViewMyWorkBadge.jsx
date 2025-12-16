@@ -7,7 +7,7 @@ export default function ViewMyWorkBadge({ onClick }) {
   return (
     <button
       onClick={onClick}
-      className="flex items-center gap-2 rounded-lg bg-white px-4 py-2.5 shadow-sm transition-colors hover:bg-gray-50"
+      className="flex items-center gap-2 rounded-lg bg-white px-4 py-2.5 shadow-sm transition-colors hover:bg-gray-50 cursor-pointer"
     >
       <span className="text-sm font-medium text-gray-700">내 작업물 보기</span>
       <Image
