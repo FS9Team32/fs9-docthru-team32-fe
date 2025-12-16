@@ -4,7 +4,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '@/providers/AuthProvider';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { notificationService } from '@/lib/services/notificationService';
 
 import imgLogo from '@/assets/logo-main.svg';
 import icBell from '@/assets/icon_bell.svg';
@@ -12,30 +13,13 @@ import icBell from '@/assets/icon_bell.svg';
 import ProfileDropdownForHeader from '@/components/ProfileDropdownForHeader';
 import NotificationDropdown from '@/components/NotificationDropdown';
 
-// 목업 알림 데이터
-const mockNotifications = [
-  {
-    id: 1,
-    message: "'신청한 챌린지 이름'이 승인/거절되었어요",
-    date: '2025.12.15',
-  },
-  {
-    id: 2,
-    message: "'신청한 챌린지 이름'에 작업물이 추가되었어요",
-    date: '2025.12.15',
-  },
-  {
-    id: 3,
-    message: "'신청한 챌린지 이름'이 마감되었어요",
-    date: '2025.12.15',
-  },
-];
-
 const Header = () => {
   const { user, logout } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+  const [isLoadingNotifications, setIsLoadingNotifications] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -43,6 +27,43 @@ const Header = () => {
   };
 
   const handleToggleNotification = () => setIsNotificationOpen((prev) => !prev);
+
+  useEffect(() => {
+    if (isNotificationOpen && user && user.role !== 'ADMIN') {
+      const fetchNotifications = async () => {
+        setIsLoadingNotifications(true);
+        try {
+          console.log('[알림] API 호출 시작:', '/users/me/notifications');
+          const response = await notificationService.getList();
+          console.log('[알림] API 응답 전체:', response);
+          const data = response?.list || [];
+          setNotifications(Array.isArray(data) ? data : []);
+        } catch (err) {
+          console.error('[알림] 알림 목록 조회 실패:', err);
+          setNotifications([]);
+        } finally {
+          setIsLoadingNotifications(false);
+        }
+      };
+      fetchNotifications();
+    }
+  }, [isNotificationOpen, user]);
+
+  const handleNotificationUpdate = () => {
+    if (isNotificationOpen && user && user.role !== 'ADMIN') {
+      const fetchNotifications = async () => {
+        try {
+          const response = await notificationService.getList();
+          const data = response?.list || [];
+          setNotifications(Array.isArray(data) ? data : []);
+        } catch (err) {
+          console.error('알림 목록 조회 실패:', err);
+          setNotifications([]);
+        }
+      };
+      fetchNotifications();
+    }
+  };
 
   const baseTab =
     'px-[17px] py-[21px] text-[16px] font-semibold transition-colors';
@@ -102,7 +123,11 @@ const Header = () => {
                     <Image src={icBell} alt="알림" width={24} height={24} />
                   </button>
                   {isNotificationOpen && (
-                    <NotificationDropdown items={mockNotifications} />
+                    <NotificationDropdown
+                      items={notifications}
+                      isLoading={isLoadingNotifications}
+                      onUpdate={handleNotificationUpdate}
+                    />
                   )}
                 </div>
               )}
