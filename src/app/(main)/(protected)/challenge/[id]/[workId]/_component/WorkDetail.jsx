@@ -42,8 +42,8 @@ export default function WorkDetail({ params, POST_DATA }) {
   }));
 
   const [feedbacks, setFeedbacks] = useState(initialFeedbacks);
-  const [likes, setLikes] = useState(POST_DATA.likeCount ?? 0);
-  const [isLiked, setIsLiked] = useState(POST_DATA.isLiked || false);
+  const [likes, setLikes] = useState(Number(POST_DATA.likeCount ?? 0));
+  const [isLiked, setIsLiked] = useState(Boolean(POST_DATA.isLiked));
 
   const handleEditPost = () => {
     router.push(`/challenge/${id}/${workId}/editor`);
@@ -95,7 +95,7 @@ export default function WorkDetail({ params, POST_DATA }) {
     const prevLikes = likes;
     const prevIsLiked = isLiked;
     const nextIsLiked = !prevIsLiked;
-    const nextLikes = prevIsLiked ? likes - 1 : likes + 1;
+    const nextLikes = nextIsLiked ? prevLikes + 1 : prevLikes - 1;
 
     setIsLiked(nextIsLiked);
     setLikes(nextLikes);
@@ -183,7 +183,7 @@ export default function WorkDetail({ params, POST_DATA }) {
     tags: challengeInfo.category ? [challengeInfo.category] : [],
     documentType: challengeInfo.documentType,
     author: postAuthor,
-    date: new Date(POST_DATA.createdAt).toLocaleDateString(),
+    date: new Date(POST_DATA.createdAt).toISOString().split('T')[0],
     likes: likes,
   };
 

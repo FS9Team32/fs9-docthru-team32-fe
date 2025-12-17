@@ -50,16 +50,13 @@ export default function FeedbackItem({
           />
           <div>
             <div className="flex flex-col">
-              <span className="font-bold text-sm text-gray-900">
-                {feedback.user.nickname}
+              <span className="font-bold text-sm text-gray-900 gap-1 text-center flex">
+                <div>{feedback.user.nickname}</div>
               </span>
               <span className="text-xs text-gray-400">
                 {feedback.createdAt}
               </span>
             </div>
-            {feedback.isEdited && (
-              <span className="text-xs text-gray-400">(수정됨)</span>
-            )}
           </div>
         </div>
 
