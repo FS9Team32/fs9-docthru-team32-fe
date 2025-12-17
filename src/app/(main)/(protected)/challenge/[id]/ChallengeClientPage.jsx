@@ -2,7 +2,6 @@
 
 import { useAuth } from '@/providers/AuthProvider';
 import ChallengeDetailView from './ChallengeDetail';
-import MyChallengeDetail from '@/app/(main)/(protected)/my/(apply)/[id]/MyChallengeDetail';
 
 export default function ChallengeClientPage({
   initialData,
@@ -10,14 +9,6 @@ export default function ChallengeClientPage({
   isAdmin,
 }) {
   const { user } = useAuth();
-
-  if (isAdmin) {
-    return (
-      <div className="w-full bg-white min-h-screen">
-        <MyChallengeDetail data={initialData} mode="ADMIN" />
-      </div>
-    );
-  }
 
   const userId = user?.id;
   let myWorkId = null;
@@ -39,5 +30,5 @@ export default function ChallengeClientPage({
     status: initialData.status || 'PENDING',
   };
 
-  return <ChallengeDetailView data={mergedData} />;
+  return <ChallengeDetailView data={mergedData} isAdmin={isAdmin} />;
 }

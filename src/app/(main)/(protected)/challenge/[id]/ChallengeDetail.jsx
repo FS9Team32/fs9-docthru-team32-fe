@@ -16,7 +16,7 @@ const formatDate = (dateStr) => {
   return `${String(d.getFullYear()).slice(-2)}/${pad(d.getMonth() + 1)}/${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
 };
 
-export default function ChallengeDetailView({ data: challenge }) {
+export default function ChallengeDetailView({ data: challenge, isAdmin }) {
   const [bestPage, setBestPage] = useState(0);
 
   if (!challenge) {
@@ -150,6 +150,7 @@ export default function ChallengeDetailView({ data: challenge }) {
             originalLink={originalLink}
             isFull={isFull}
             isParticipating={isParticipating}
+            isAdmin={isAdmin}
           />
         </aside>
       </div>

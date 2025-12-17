@@ -6,19 +6,22 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowUpRight } from 'lucide-react';
 
+import StatusBanner from '@/app/(main)/(protected)/my/apply/_components/StatusBanner';
+import ReasonBox from '@/app/(main)/(protected)/my/apply/_components/ReasonBox';
+import CancelMenu from '@/app/(main)/(protected)/my/apply/_components/CancelMenu';
+import CancelModal from '@/app/(main)/(protected)/my/apply/_components/CancelModal';
+
+import { cancelApplication } from '@/app/(main)/(protected)/my/apply/[id]/actions';
+
 import LinkButton from '@/components/LinkButton';
-import StatusBanner from '../_components/StatusBanner';
-import ReasonBox from '../_components/ReasonBox';
-import CancelMenu from '../_components/CancelMenu';
-import CancelModal from '../_components/CancelModal';
 import TypeChip from '@/components/TypeChip';
-import { cancelApplication } from './actions';
 import Modal from '@/components/modal/Modal';
 import InputModal from '@/components/modal/InputModal';
 
 import { CATEGORY_TEXT } from '@/constants/challengeConstants';
 import timeIcon from '@/assets/time.svg';
 import personIcon from '@/assets/person.svg';
+import ImgMember from '@/assets/member.png';
 import IconArrowLeft from '@/assets/icon_arrow_left.svg';
 import IconArrowRight from '@/assets/icon_arrow_right.svg';
 
@@ -41,6 +44,13 @@ const getDocumentLabel = (value) => {
   return map[value] || value;
 };
 
+const formatDate = (dateStr) => {
+  if (!dateStr) return '';
+  const d = new Date(dateStr);
+  const pad = (n) => String(n).padStart(2, '0');
+  return `${String(d.getFullYear()).slice(-2)}/${pad(d.getMonth() + 1)}/${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+};
+
 const formatDeadline = (dateString) => {
   if (!dateString) return '';
   const date = new Date(dateString);
@@ -49,24 +59,11 @@ const formatDeadline = (dateString) => {
     : `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일 마감`;
 };
 
-const getStatusLabel = (mode, status) => {
-  if (mode === 'ADMIN') {
-    if (status === 'REJECTED') return '신청이 거절된 챌린지입니다.';
-    if (status === 'APPROVED') return '신청이 승인된 챌린지입니다.';
-  }
-  if (mode === 'USER') {
-    const map = {
-      DELETED: '삭제된 챌린지입니다',
-      PENDING: '승인 대기 중입니다.',
-      REJECTED: '신청이 거절되었습니다',
-      APPROVED: '신청이 승인되었습니다',
-    };
-    return map[status] || null;
-  }
-  return null;
-};
-
-export default function ChallengeDetailView({ data, mode = 'USER' }) {
+export default function ChallengeDetailView({
+  data,
+  mode = 'USER',
+  onUpdateStatus,
+}) {
   const router = useRouter();
   const params = useParams();
 
@@ -81,6 +78,12 @@ export default function ChallengeDetailView({ data, mode = 'USER' }) {
 
   if (!data)
     return <div className="p-20 text-center text-gray-500">데이터 없음</div>;
+
+  const creator = {
+    nickname: data.user?.nickname || data.nickname || '참여자',
+    avatar: data.user?.avatar || data.avatar,
+    role: (data.user?.role || data.role) === 'PRO' ? '전문가' : '일반',
+  };
 
   const rawId = params?.id || data?.id;
   const currentId = Number(rawId);
@@ -105,17 +108,15 @@ export default function ChallengeDetailView({ data, mode = 'USER' }) {
     setViewFeedback(feedback);
     setViewUpdatedAt(new Date().toISOString());
   };
+
   const handleConfirmCancel = async () => {
     try {
       const applicationId = data?.applicationId || data?.id;
-
       if (!applicationId) {
         alert('신청 정보를 찾을 수 없습니다.');
         return;
       }
-
       await cancelApplication(applicationId);
-
       alert('취소가 완료되었습니다.');
       setIsCancelModalOpen(false);
       router.replace('/my');
@@ -151,7 +152,7 @@ export default function ChallengeDetailView({ data, mode = 'USER' }) {
           </span>
           <div className="flex items-center gap-2">
             <Link
-              href={`/challenge/${prevId}`}
+              href={`/admin/apply/${prevId}`}
               className={`flex h-8 w-8 items-center justify-center rounded-full transition ${
                 currentId <= 1
                   ? 'cursor-not-allowed opacity-30'
@@ -162,7 +163,7 @@ export default function ChallengeDetailView({ data, mode = 'USER' }) {
               <Image src={IconArrowLeft} alt="이전" width={24} height={24} />
             </Link>
             <Link
-              href={`/challenge/${nextId}`}
+              href={`/admin/apply/${nextId}`}
               className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-gray-100 transition"
             >
               <Image src={IconArrowRight} alt="다음" width={24} height={24} />
@@ -175,11 +176,12 @@ export default function ChallengeDetailView({ data, mode = 'USER' }) {
         {(mode === 'USER' || viewStatus !== 'PENDING') && (
           <StatusBanner status={viewStatus} isAdmin={mode === 'ADMIN'} />
         )}
+
         <ReasonBox
           status={viewStatus}
           message={viewFeedback}
           date={viewUpdatedAt}
-          isAdmin={true}
+          isAdmin={mode === 'ADMIN'}
         />
       </div>
 
@@ -213,6 +215,27 @@ export default function ChallengeDetailView({ data, mode = 'USER' }) {
           {description}
         </p>
       </div>
+
+      {viewStatus === 'APPROVED' && (
+        <div className="author-info mb-4 flex items-center gap-2">
+          <div className="relative h-6 w-6 overflow-hidden rounded-full border border-gray-200">
+            <Image
+              src={creator.avatar || ImgMember}
+              alt="작성자 프로필"
+              fill
+              className="object-cover"
+            />
+          </div>
+          <span className="text-xs font-medium text-gray-800">
+            {creator.nickname}
+          </span>
+          {creator.role === '전문가' && (
+            <span className="ml-1 rounded bg-blue-100 px-1.5 py-0.5 text-[10px] font-bold text-blue-600">
+              전문가
+            </span>
+          )}
+        </div>
+      )}
 
       <div className="mb-8 flex items-center gap-5 text-sm font-medium text-gray-500">
         <div className="flex items-center gap-1.5">
