@@ -163,7 +163,7 @@ export default async function AdminApplyPage({ params }) {
   async function handleStatusUpdate(status, reason) {
     'use server';
     try {
-      if (status === 'ACCEPTED') {
+      if (status === 'APPROVED') {
         await createChallenge(id);
       } else {
         await updateApplicationStatus(id, status, reason);
