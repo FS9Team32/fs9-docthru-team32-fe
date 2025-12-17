@@ -90,18 +90,18 @@ const Header = () => {
           {isAdmin && (
             <nav className="hidden md:flex items-center gap-0">
               <Link
-                href="/challenge"
+                href="/my"
                 className={`${baseTab} ${
-                  pathname.startsWith('/challenge') ? activeTab : inactiveTab
+                  pathname.startsWith('/my') ? activeTab : inactiveTab
                 }`}
               >
                 챌린지 관리
               </Link>
 
               <Link
-                href="/list"
+                href="/challenge"
                 className={`${baseTab} ${
-                  pathname.startsWith('/list') ? activeTab : inactiveTab
+                  pathname.startsWith('/challenge') ? activeTab : inactiveTab
                 }`}
               >
                 챌린지 목록

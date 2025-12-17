@@ -2,7 +2,10 @@
 
 import StatusChip from '@/components/StatusChip';
 import TypeChip from '@/components/TypeChip';
-import { DOCUMENT_TYPE_OPTIONS } from '@/constants/challengeConstants';
+import {
+  DOCUMENT_TYPE_OPTIONS,
+  CATEGORY_TEXT,
+} from '@/constants/challengeConstants';
 
 const formatDate = (dateString) => {
   if (!dateString) return '';
@@ -18,7 +21,18 @@ const getDocumentTypeLabel = (type) => {
   return option?.label || type;
 };
 
-export default function ApplicationTable({ applications }) {
+const getMatchingChipKey = (input) => {
+  if (!input) return null;
+  const cleanInput = input.trim().toUpperCase();
+  const matchedEntry = Object.entries(CATEGORY_TEXT).find(([key, value]) => {
+    return (
+      key.toUpperCase() === cleanInput || value.toUpperCase() === cleanInput
+    );
+  });
+  return matchedEntry ? matchedEntry[0] : input;
+};
+
+export default function ApplicationTable({ applications, onRowClick }) {
   if (applications.length === 0) {
     return (
       <div className="flex min-h-[400px] items-center justify-center">
@@ -62,11 +76,14 @@ export default function ApplicationTable({ applications }) {
           {applications.map((application, index) => (
             <tr
               key={application.id}
-              className="border-b border-gray-100 hover:bg-gray-50"
+              className={`border-b border-gray-100 hover:bg-gray-50 ${
+                onRowClick ? 'cursor-pointer' : ''
+              }`}
+              onClick={() => onRowClick?.(application.id)}
             >
               <td className="px-4 py-4 text-sm text-gray-900">{index + 1}</td>
               <td className="px-4 py-4">
-                <TypeChip type={application.category} />
+                <TypeChip type={getMatchingChipKey(application.category)} />
               </td>
               <td className="px-4 py-4 text-sm text-gray-700">
                 {getDocumentTypeLabel(application.documentType)}

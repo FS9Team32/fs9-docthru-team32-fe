@@ -7,4 +7,7 @@ export const challengeApplicationService = {
       body: JSON.stringify(data),
     }),
   get: () => tokenFetch('/users/me/challenge-applications'),
+  getAll: () => tokenFetch('/challenge-applications'),
+  getById: (applicationId) =>
+    tokenFetch(`/challenge-applications/${applicationId}`),
 };
