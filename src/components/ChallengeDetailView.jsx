@@ -10,7 +10,7 @@ import StatusBanner from '@/app/(main)/(protected)/my/apply/_components/StatusBa
 import ReasonBox from '@/app/(main)/(protected)/my/apply/_components/ReasonBox';
 import CancelMenu from '@/app/(main)/(protected)/my/apply/_components/CancelMenu';
 import CancelModal from '@/app/(main)/(protected)/my/apply/_components/CancelModal';
-
+import BackButton from '@/components/BackButton';
 import { cancelApplication } from '@/app/(main)/(protected)/my/apply/[id]/actions';
 
 import LinkButton from '@/components/LinkButton';
@@ -145,6 +145,15 @@ export default function ChallengeDetailView({
 
   return (
     <div className="mx-auto max-w-[890px] p-6 pb-20">
+      <div className="mb-6">
+        <button
+          type="button"
+          onClick={() => router.back()}
+          className="rounded-lg bg-gray-100 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-200 transition-colors"
+        >
+          ← 목록으로 돌아가기
+        </button>
+      </div>
       {mode === 'ADMIN' && (
         <div className="mb-6 flex w-full items-center justify-between">
           <span className="text-[16px] font-medium text-gray-800">

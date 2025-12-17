@@ -15,7 +15,7 @@ import TypeChip from '@/components/TypeChip';
 import { cancelApplication } from './actions';
 import Modal from '@/components/modal/Modal';
 import InputModal from '@/components/modal/InputModal';
-
+import BackButton from '@/components/BackButton';
 import { CATEGORY_TEXT } from '@/constants/challengeConstants';
 import timeIcon from '@/assets/time.svg';
 import personIcon from '@/assets/person.svg';
@@ -131,6 +131,15 @@ export default function ChallengeDetailView({
 
   return (
     <div className="mx-auto max-w-[890px] p-6 pb-20">
+      <div className="mb-6">
+        <button
+          type="button"
+          onClick={() => router.back()}
+          className="rounded-lg bg-gray-100 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-200 transition-colors"
+        >
+          ← 목록으로 돌아가기
+        </button>
+      </div>
       {mode === 'ADMIN' && (
         <div className="mb-6 flex w-full items-center justify-between">
           <span className="text-[16px] font-medium text-gray-800">
