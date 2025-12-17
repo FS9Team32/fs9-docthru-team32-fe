@@ -183,6 +183,8 @@ export default function CreateChallengePage() {
       };
 
       if (isEditMode) {
+        await challengeService.update(challengeId, finalData);
+        router.push('/challenge');
       } else {
         await challengeApplicationService.create(finalData);
         router.push('/challenge');
