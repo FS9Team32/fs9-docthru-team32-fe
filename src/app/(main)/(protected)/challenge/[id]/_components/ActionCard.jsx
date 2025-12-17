@@ -24,6 +24,7 @@ export default function ActionCard({
   isParticipating,
   isAdmin,
   workId,
+  isWorked,
 }) {
   const router = useRouter();
   const isClosed = status === 'CLOSED';
@@ -42,11 +43,14 @@ export default function ActionCard({
   const handleViewOriginal = () => {
     if (originalLink) window.open(originalLink, '_blank');
   };
-
   const handleAction = () => {
     if (isDisabled) return;
 
-    router.push(`/challenge/${id}/${workId}/editor`);
+    if (!isWorked) {
+      router.push(`/challenge/${id}/write`);
+    } else {
+      router.push(`/challenge/${id}/${workId}/editor`);
+    }
   };
 
   return (

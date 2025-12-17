@@ -37,6 +37,7 @@ export default function ChallengeClientPage({
     works: worksList,
     myWorkId: myWorkId,
     status: initialData.status || 'PENDING',
+    isWorked: initialData.isWorked || !!myWorkId,
   };
 
   return <ChallengeDetailView data={mergedData} isAdmin={isAdmin} />;
