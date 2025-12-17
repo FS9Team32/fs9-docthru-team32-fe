@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import FeedbackItem from './FeedbackItem';
 import Image from 'next/image';
 import Empty from '@/assets/empty.png';
@@ -8,48 +9,57 @@ import Button from '@/components/Button';
 export default function FeedbackList({
   feedbacks,
   totalCount,
-  onLoadMore,
   isCompleted,
   currentUser,
   onUpdate,
   onDelete,
 }) {
-  const hasMore = feedbacks.length < totalCount; // 불러올 데이터가 남았는지 확인
+  const [visibleCount, setVisibleCount] = useState(5);
+
+  const feedbacksArray = Array.isArray(feedbacks) ? feedbacks : [];
+
+  const visibleFeedbacks = feedbacksArray.slice(0, visibleCount);
+
+  const hasMore = visibleCount < feedbacksArray.length;
+
+  const handleLoadMore = () => {
+    setVisibleCount((prev) => prev + 5);
+  };
 
   return (
-    <div className="space-y-4">
-      {feedbacks.length === 0 ? (
-        <div>
-          <Image
-            src={Empty}
-            alt="No Feedback"
-            width={450}
-            height={450}
-            className="mx-auto "
-          />
-          <p className="text-center text-gray-500 mt-10">
-            아직 피드백이 없습니다.
-          </p>
+    <div className="mt-6">
+      {feedbacksArray.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-12 text-gray-400">
+          <Image src={Empty} alt="empty" width={120} height={120} />
+          <p className="mt-4">아직 피드백이 없습니다.</p>
         </div>
       ) : (
-        feedbacks.map((item) => (
-          <FeedbackItem
-            key={item.id}
-            feedback={item}
-            isCompleted={isCompleted}
-            currentUser={currentUser}
-            onUpdate={onUpdate}
-            onDelete={onDelete}
-          />
-        ))
-      )}
+        <>
+          <div className="space-y-4">
+            {visibleFeedbacks.map((feedback) => (
+              <FeedbackItem
+                key={feedback.id}
+                feedback={feedback}
+                isCompleted={isCompleted}
+                currentUser={currentUser}
+                onUpdate={onUpdate}
+                onDelete={onDelete}
+              />
+            ))}
+          </div>
 
-      {hasMore && (
-        <div className="text-center mt-6">
-          <Button variant="outline" size="md" onClick={onLoadMore}>
-            더 보기
-          </Button>
-        </div>
+          {hasMore && (
+            <div className="flex justify-center mt-6">
+              <Button
+                onClick={handleLoadMore}
+                variant="solid"
+                className="bg-gray-100 text-gray-500"
+              >
+                더 보기
+              </Button>
+            </div>
+          )}
+        </>
       )}
     </div>
   );
