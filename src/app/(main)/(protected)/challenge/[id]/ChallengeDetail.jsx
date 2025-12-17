@@ -151,6 +151,7 @@ export default function ChallengeDetailView({ data: challenge, isAdmin }) {
             isFull={isFull}
             isParticipating={isParticipating}
             isAdmin={isAdmin}
+            workId={myWorkId}
           />
         </aside>
       </div>
