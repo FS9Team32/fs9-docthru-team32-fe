@@ -1,5 +1,6 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
+import { revalidatePath } from 'next/cache';
 import ChallengeClientPage from './ChallengeClientPage';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -30,36 +31,33 @@ async function getChallengeData(id) {
   const role = await getUserRole(token);
   const isAdmin = role === 'ADMIN';
 
-  const mainUrl = isAdmin
-    ? `${BASE_URL}/challenge-applications/${id}`
-    : `${BASE_URL}/challenges/${id}`;
+  const mainUrl = `${BASE_URL}/challenges/${id}`;
 
   try {
-    const requests = [fetch(mainUrl, { headers, cache: 'no-store' })];
-    if (!isAdmin) {
-      requests.push(
-        fetch(`${BASE_URL}/challenges/${id}/works?page=1&limit=100`, {
-          headers,
-          cache: 'no-store',
-        }),
-      );
-    }
+    const requests = [
+      fetch(mainUrl, { headers, cache: 'no-store' }),
+      fetch(`${BASE_URL}/challenges/${id}/works?page=1&limit=100`, {
+        headers,
+        cache: 'no-store',
+      }),
+    ];
 
     const [challengeRes, worksRes] = await Promise.all(requests);
 
     if (challengeRes.status === 401) return { redirect: '/login' };
-    if (!challengeRes.ok) throw new Error('Failed to fetch data');
+    if (!challengeRes.ok)
+      throw new Error(`Fetch failed: ${challengeRes.status}`);
 
     const challengeData = await challengeRes.json();
-
     const worksList = worksRes?.ok ? (await worksRes.json()).list : [];
 
     return {
       challengeData: { ...challengeData, mode: role },
       worksList: Array.isArray(worksList) ? worksList : [],
+      isAdmin,
     };
   } catch (error) {
-    console.error(error);
+    console.error('Data Fetch Error:', error);
     return null;
   }
 }
@@ -69,21 +67,18 @@ export default async function ChallengePage({ params }) {
   const result = await getChallengeData(id);
 
   if (result?.redirect) redirect(result.redirect);
+  if (!result) return <div className="p-20 text-center">데이터 없음</div>;
 
-  if (!result) {
-    return (
-      <div className="py-20 text-center text-gray-500">
-        챌린지 정보를 불러올 수 없습니다.
-      </div>
-    );
+  async function handleUpdateStatus(newStatus, adminFeedback) {
+    'use server';
   }
 
   return (
     <ChallengeClientPage
       initialData={result.challengeData}
       worksList={result.worksList}
-      isAdmin={result.challengeData.mode === 'ADMIN'}
-      challengeId={id}
+      isAdmin={result.isAdmin}
+      onUpdateStatus={handleUpdateStatus}
     />
   );
 }

@@ -21,12 +21,13 @@ export default function ActionCard({
   maxParticipants,
   originalLink,
   isFull,
-
   isParticipating,
+  isAdmin,
 }) {
   const router = useRouter();
   const isClosed = status === 'CLOSED';
 
+  // 1. 상태 결정
   const getButtonState = () => {
     if (isClosed) return { isDisabled: true, text: '작업 도전하기' };
     if (isParticipating) return { isDisabled: false, text: '도전 계속하기' };
@@ -34,35 +35,39 @@ export default function ActionCard({
     return { isDisabled: false, text: '작업 도전하기' };
   };
 
-  const { isDisabled, text } = getButtonState();
+  const { isDisabled: baseIsDisabled, text } = getButtonState();
+
+  // 2. 어드민이면 무조건 비활성화
+  const isDisabled = baseIsDisabled || isAdmin;
 
   const handleViewOriginal = () => {
     if (originalLink) window.open(originalLink, '_blank');
   };
 
   const handleAction = () => {
+    // [수정 1] 함수 실행 즉시 차단: 비활성화 상태면 라우터 이동 코드를 실행하지 않고 종료
+    if (isDisabled) return;
+
     router.push(`/challenge/${id}/editor`);
   };
 
   return (
-    <div className="rounded-2xl border-2  w-[285px] h-[174px] border-gray-100 bg-white p-5">
+    <div className="rounded-2xl border-2 w-[285px] h-[174px] border-gray-100 bg-white p-5">
       <div className="mb-6 flex flex-row items-center justify-center gap-6">
+        {/* ... 상단 아이콘 영역 그대로 유지 ... */}
         <div className="flex items-center gap-1.5 text-[13px] font-normal text-gray-500">
           <Image src={timeIcon} alt="마감일" width={24} height={24} />
-
           <span className="shrink-0">{formatDeadline(deadline)}</span>
         </div>
 
         <div className="flex items-center gap-1.5 text-sm font-normal text-gray-600">
           <Image src={personIcon} alt="참여 인원" width={24} height={24} />
-
           <span className="shrink-0">
             <span
               className={`font-normal ${isFull ? 'font-bold text-orange-500' : 'text-gray-600'}`}
             >
               {currentParticipants}
             </span>
-
             {maxParticipants ? `/${maxParticipants}` : ''}
           </span>
         </div>
@@ -71,16 +76,18 @@ export default function ActionCard({
       <div className="space-y-3 flex flex-col items-center">
         <button
           onClick={handleViewOriginal}
-          className=" rounded-xl w-[253px] h-10 border-2 bg-yellow-400 text-sm font-bold text-black "
+          className="rounded-xl w-[253px] h-10 border-2 bg-yellow-400 text-sm font-bold text-black"
         >
           원문 보기
         </button>
         <button
           disabled={isDisabled}
+          // [수정 2] isDisabled가 true면 undefined 처리 (이중 잠금)
           onClick={isDisabled ? undefined : handleAction}
-          className={` rounded-xl  w-[253px] h-10 text-sm font-bold transition ${
+          className={`rounded-xl w-[253px] h-10 text-sm font-bold transition ${
             isDisabled
-              ? 'cursor-not-allowed bg-gray-200 text-gray-500'
+              ? // [수정 3] pointer-events-none 추가: 마우스 클릭 자체를 무시하게 만듦
+                'cursor-not-allowed bg-gray-200 text-gray-500 pointer-events-none'
               : 'bg-gray-900 text-white hover:bg-gray-800'
           }`}
         >
