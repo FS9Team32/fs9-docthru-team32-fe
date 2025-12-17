@@ -1,5 +1,6 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import StatusChip from '@/components/StatusChip';
 import TypeChip from '@/components/TypeChip';
 import {
@@ -33,6 +34,8 @@ const getMatchingChipKey = (input) => {
 };
 
 export default function ApplicationTable({ applications, onRowClick }) {
+  const router = useRouter();
+
   if (applications.length === 0) {
     return (
       <div className="flex min-h-[400px] items-center justify-center">
@@ -40,6 +43,10 @@ export default function ApplicationTable({ applications, onRowClick }) {
       </div>
     );
   }
+
+  const handleRowClick = (application) => {
+    router.push(`/my/apply/${application.id}`);
+  };
 
   return (
     <div className="overflow-x-auto bg-white rounded-lg shadow-sm">
@@ -77,9 +84,15 @@ export default function ApplicationTable({ applications, onRowClick }) {
             <tr
               key={application.id}
               className={`border-b border-gray-100 hover:bg-gray-50 ${
-                onRowClick ? 'cursor-pointer' : ''
+                onRowClick || handleRowClick ? 'cursor-pointer' : ''
               }`}
-              onClick={() => onRowClick?.(application.id)}
+              onClick={() => {
+                if (onRowClick) {
+                  onRowClick(application.id);
+                } else {
+                  handleRowClick(application);
+                }
+              }}
             >
               <td className="px-4 py-4 text-sm text-gray-900">{index + 1}</td>
               <td className="px-4 py-4">
