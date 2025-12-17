@@ -1,23 +1,18 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
 
-// 본격적으로 댓글 수정/삭제 구현하면서 수정 필요
-export default function CommentDropdown(
-  {
-    /* onEdit, onDelete */
-  },
-) {
+export default function CommentDropdown({ onEdit, onDelete }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
   const handleToggleDropdown = () => setDropdownOpen((prev) => !prev);
 
   const handleEdit = () => {
-    //onEdit();
+    onEdit();
     setDropdownOpen(false);
   };
 
   const handleDelete = () => {
-    //onDelete();
+    onDelete();
     setDropdownOpen(false);
   };
 

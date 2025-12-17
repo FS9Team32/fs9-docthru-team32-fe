@@ -45,6 +45,7 @@ export default function ApplicationTable({ applications, onRowClick }) {
   }
 
   const handleRowClick = (application) => {
+    // 신청한 챌린지 상세 페이지로 이동
     router.push(`/my/apply/${application.id}`);
   };
 

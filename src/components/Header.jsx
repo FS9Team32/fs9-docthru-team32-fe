@@ -17,6 +17,7 @@ const Header = () => {
   const { user, logout } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
+  const isLoggedIn = !!user;
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [isLoadingNotifications, setIsLoadingNotifications] = useState(false);
@@ -76,7 +77,7 @@ const Header = () => {
     <header className="sticky top-0 z-50 w-full border-b border-gray-100 bg-white">
       <div className="flex h-[60px] w-full max-w-7xl mx-auto items-center justify-between px-4 sm:px-8">
         <div className="flex items-center gap-4 md:gap-12">
-          <Link href="/">
+          <Link href={isLoggedIn ? '/challenge' : '/'}>
             <Image
               src={imgLogo}
               alt="Docthru Logo"
