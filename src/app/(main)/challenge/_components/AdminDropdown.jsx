@@ -1,8 +1,10 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 
-export default function AdminDropdown({ onEdit, onDelete }) {
+export default function AdminDropdown({ challengeId, onEdit, onDelete }) {
+  const router = useRouter();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -15,8 +17,12 @@ export default function AdminDropdown({ onEdit, onDelete }) {
   const handleEdit = (e) => {
     e?.preventDefault();
     e?.stopPropagation();
-    if (onEdit) onEdit();
     setDropdownOpen(false);
+    if (challengeId) {
+      router.push(`/challenge/create?id=${challengeId}`);
+    } else if (onEdit) {
+      onEdit();
+    }
   };
 
   const handleDelete = (e) => {

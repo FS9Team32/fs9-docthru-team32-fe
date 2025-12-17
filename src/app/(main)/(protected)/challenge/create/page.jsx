@@ -1,14 +1,15 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import InputField from '@/components/Field/InputField';
 import TextAreaField from '@/components/Field/TextAreaField';
 import CalendarField from '@/components/Field/CalendarField';
 import CategoryField from '@/components/Field/CategoryField';
 import { useAuth } from '@/providers/AuthProvider';
 import { challengeApplicationService } from '@/lib/services/challenge/challengeApplicationService';
+import { challengeService } from '@/lib/services/challenge/challengeService';
 import {
   CATEGORY_LABELS,
   CATEGORY_TEXT,
@@ -89,7 +90,11 @@ const validateUrlExists = async (url) => {
 
 export default function CreateChallengePage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { user, isLoading } = useAuth();
+  const challengeId = searchParams.get('id');
+  const isEditMode = !!challengeId;
+  const [isLoadingChallenge, setIsLoadingChallenge] = useState(false);
 
   const methods = useForm({
     mode: 'onChange',
@@ -104,13 +109,49 @@ export default function CreateChallengePage() {
     },
   });
 
-  // useEffect(() => {
-  //   if (!isLoading && !user) {
-  //     router.replace('/login');
-  //   }
-  // }, [isLoading, user, router]);
+  // 수정 모드일 때 기존 챌린지 데이터 불러오기
+  useEffect(() => {
+    const fetchChallengeData = async () => {
+      if (!isEditMode || !challengeId) return;
 
-  if (isLoading || !user) return null;
+      setIsLoadingChallenge(true);
+      try {
+        const challengeData = await challengeService.getById(challengeId);
+
+        const categoryLabel =
+          CATEGORY_TEXT[challengeData.category] || challengeData.category;
+        const documentTypeIndex = DOCUMENT_TYPE_VALUES.indexOf(
+          challengeData.documentType,
+        );
+        const documentTypeLabel =
+          documentTypeIndex !== -1
+            ? DOCUMENT_TYPE_LABELS[documentTypeIndex]
+            : challengeData.documentType;
+
+        const deadlineDate = challengeData.deadlineAt
+          ? new Date(challengeData.deadlineAt)
+          : null;
+
+        methods.reset({
+          title: challengeData.title || '',
+          originalLink: challengeData.originalLink || '',
+          category: categoryLabel || '',
+          documentType: documentTypeLabel || '',
+          deadlineAt: deadlineDate,
+          maxParticipants: challengeData.maxParticipants?.toString() || '',
+          description: challengeData.description || '',
+        });
+      } catch (error) {
+        console.error('챌린지 데이터 불러오기 실패:', error);
+      } finally {
+        setIsLoadingChallenge(false);
+      }
+    };
+
+    fetchChallengeData();
+  }, [isEditMode, challengeId, methods]);
+
+  if (isLoading || !user || isLoadingChallenge) return null;
 
   const { handleSubmit } = methods;
 
@@ -141,14 +182,15 @@ export default function CreateChallengePage() {
         description: data.description,
       };
 
-      await challengeApplicationService.create(finalData);
-
-      // 성공 시 /my로 리다이렉트
-      router.push('/my');
+      if (isEditMode) {
+        await challengeService.update(challengeId, finalData);
+        router.push('/challenge');
+      } else {
+        await challengeApplicationService.create(finalData);
+        router.push('/challenge');
+      }
     } catch (error) {
-      // 에러 처리
-      console.error('챌린지 신청 실패:', error);
-      alert(error.message || '챌린지 신청에 실패했습니다. 다시 시도해주세요.');
+      console.error('챌린지 처리 실패:', error);
     }
   };
 
@@ -156,7 +198,7 @@ export default function CreateChallengePage() {
     <div className="min-h-screen w-screen -ml-[calc((100vw-100%)/2)] -mr-[calc((100vw-100%)/2)] px-4 py-8 bg-white">
       <div className="mx-auto max-w-[590px]">
         <h1 className="mb-8 text-xl font-semibold leading-none text-gray-900">
-          신규 챌린지 신청
+          {isEditMode ? '챌린지 수정' : '신규 챌린지 신청'}
         </h1>
 
         <FormProvider {...methods}>
@@ -267,7 +309,7 @@ export default function CreateChallengePage() {
                 className="w-full py-3 rounded-lg bg-black text-white font-semibold text-center hover:bg-gray-800 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
                 disabled={!methods.formState.isValid}
               >
-                신청하기
+                {isEditMode ? '수정하기' : '신청하기'}
               </button>
             </section>
           </form>

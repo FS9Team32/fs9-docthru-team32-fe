@@ -61,7 +61,7 @@ export default function ChallengeCard({ challenge, onDelete }) {
     >
       {isAdmin && (
         <div className="absolute top-4 right-4 z-10">
-          <AdminDropdown onDelete={handleDelete} />
+          <AdminDropdown challengeId={challenge.id} onDelete={handleDelete} />
         </div>
       )}
       <Link href={`/challenge/${challenge.id}`} className="block">
