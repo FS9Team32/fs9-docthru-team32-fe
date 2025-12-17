@@ -3,7 +3,10 @@
 import { useRouter } from 'next/navigation';
 import StatusChip from '@/components/StatusChip';
 import TypeChip from '@/components/TypeChip';
-import { DOCUMENT_TYPE_OPTIONS } from '@/constants/challengeConstants';
+import {
+  DOCUMENT_TYPE_OPTIONS,
+  CATEGORY_TEXT,
+} from '@/constants/challengeConstants';
 
 const formatDate = (dateString) => {
   if (!dateString) return '';
@@ -19,7 +22,18 @@ const getDocumentTypeLabel = (type) => {
   return option?.label || type;
 };
 
-export default function ApplicationTable({ applications }) {
+const getMatchingChipKey = (input) => {
+  if (!input) return null;
+  const cleanInput = input.trim().toUpperCase();
+  const matchedEntry = Object.entries(CATEGORY_TEXT).find(([key, value]) => {
+    return (
+      key.toUpperCase() === cleanInput || value.toUpperCase() === cleanInput
+    );
+  });
+  return matchedEntry ? matchedEntry[0] : input;
+};
+
+export default function ApplicationTable({ applications, onRowClick }) {
   const router = useRouter();
 
   if (applications.length === 0) {
@@ -70,12 +84,20 @@ export default function ApplicationTable({ applications }) {
           {applications.map((application, index) => (
             <tr
               key={application.id}
-              onClick={() => handleRowClick(application)}
-              className="border-b border-gray-100 hover:bg-gray-50 cursor-pointer"
+              className={`border-b border-gray-100 hover:bg-gray-50 ${
+                onRowClick || handleRowClick ? 'cursor-pointer' : ''
+              }`}
+              onClick={() => {
+                if (onRowClick) {
+                  onRowClick(application.id);
+                } else {
+                  handleRowClick(application);
+                }
+              }}
             >
               <td className="px-4 py-4 text-sm text-gray-900">{index + 1}</td>
               <td className="px-4 py-4">
-                <TypeChip type={application.category} />
+                <TypeChip type={getMatchingChipKey(application.category)} />
               </td>
               <td className="px-4 py-4 text-sm text-gray-700">
                 {getDocumentTypeLabel(application.documentType)}
