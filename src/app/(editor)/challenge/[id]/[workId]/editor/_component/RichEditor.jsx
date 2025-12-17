@@ -18,15 +18,13 @@ export default function RichEditor({ content, onChange }) {
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
       Placeholder.configure({
         placeholder: '번역 내용을 적어주세요',
-        emptyEditorClass:
-          'before:content-[attr(data-placeholder)] before:italic before:float-left before:text-gray-400',
       }),
     ],
     content: content,
     editorProps: {
       attributes: {
         class:
-          'prose prose-sm sm:prose lg:prose-lg xl:prose-2xl m-5 focus:outline-none',
+          'prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto py-10 px-6 focus:outline-none min-h-[calc(100vh-200px)]',
       },
     },
     onUpdate: ({ editor }) => onChange(editor.getHTML()),
@@ -41,10 +39,18 @@ export default function RichEditor({ content, onChange }) {
   if (!editor) return null;
 
   return (
-    <div className="w-full h-full flex flex-col bg-white rounded-lg  overflow-hidden ">
-      <Toolbar editor={editor} />
+    <div className="w-full h-full flex flex-col bg-white shadow-sm border-x border-gray-100">
+      <div className="w-full">
+        <div className="max-w-4xl mx-auto">
+          <Toolbar editor={editor} />
+        </div>
+      </div>
 
-      <EditorContent editor={editor} />
+      <div className="flex-1 cursor-text">
+        <div className="h-full px-8 py-4">
+          <EditorContent editor={editor} />
+        </div>
+      </div>
     </div>
   );
 }
