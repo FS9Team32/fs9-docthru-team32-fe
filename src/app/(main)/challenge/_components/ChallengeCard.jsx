@@ -5,16 +5,19 @@ import Link from 'next/link';
 import Image from 'next/image';
 import TypeChip from '@/components/TypeChip';
 import CategoryChip from '@/components/CategoryChip';
-import CommentDropdown from '@/components/CommentDropdown';
+import AdminDropdown from './AdminDropdown';
+import InputModal from '@/components/modal/InputModal';
 import { CHALLENGE_STATUS } from '@/constants/challengeConstants';
 import { useAuth } from '@/providers/AuthProvider';
+import { useModal } from '@/providers/ModalProvider';
 import icPerson from '@/assets/ic_person.svg';
 import icDeadline from '@/assets/ic_deadline.svg';
 import icDeadlineCurrent from '@/assets/ic_deadlinecurrent.svg';
 import icPersonCurrent from '@/assets/ic_personcurrent.svg';
 
-export default function ChallengeCard({ challenge }) {
+export default function ChallengeCard({ challenge, onDelete }) {
   const { user } = useAuth();
+  const { openModal, closeModal } = useModal();
   const isAdmin = user?.role === 'ADMIN';
   const deadlineDate = useMemo(() => {
     if (typeof window === 'undefined') return '';
@@ -31,6 +34,26 @@ export default function ChallengeCard({ challenge }) {
   const isClosed = challenge.status === CHALLENGE_STATUS.CLOSED;
   const isFilled = challenge.status === CHALLENGE_STATUS.FILLED;
 
+  const handleDelete = () => {
+    openModal(InputModal, {
+      onClose: closeModal,
+      onSubmit: async (adminFeedback) => {
+        try {
+          if (onDelete) {
+            await onDelete(challenge.id, adminFeedback);
+            closeModal();
+          }
+        } catch (error) {
+          console.error('삭제 중 에러:', error);
+        }
+      },
+      title: '삭제 사유',
+      label: '내용',
+      placeholder: '삭제 사유를 입력해주세요',
+      submitButtonText: '전송',
+    });
+  };
+
   return (
     <div
       className="relative block rounded-lg bg-white p-6 transition-colors hover:bg-gray-50"
@@ -38,7 +61,7 @@ export default function ChallengeCard({ challenge }) {
     >
       {isAdmin && (
         <div className="absolute top-4 right-4 z-10">
-          <CommentDropdown />
+          <AdminDropdown onDelete={handleDelete} />
         </div>
       )}
       <Link href={`/challenge/${challenge.id}`} className="block">

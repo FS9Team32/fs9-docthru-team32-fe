@@ -102,6 +102,21 @@ export default function ChallengePage() {
     console.log('페이지 변경:', page);
   };
 
+  const handleDeleteChallenge = async (challengeId, adminFeedback) => {
+    try {
+      console.log('삭제 API 호출:', challengeId, adminFeedback);
+      await challengeService.delete(challengeId, adminFeedback);
+      console.log('삭제 성공');
+      setChallenges((prev) =>
+        prev.filter((challenge) => challenge.id !== challengeId),
+      );
+    } catch (error) {
+      console.error('챌린지 삭제 실패:', error);
+      alert('삭제에 실패했습니다: ' + (error.message || '알 수 없는 오류'));
+      throw error;
+    }
+  };
+
   const itemsPerPage = 5;
   const totalPages = Math.ceil(filteredChallenges.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -144,7 +159,10 @@ export default function ChallengePage() {
             <SearchBar onSearch={handleSearch} />
           </div>
         )}
-        <ChallengeCardList challenges={paginatedChallenges} />
+        <ChallengeCardList
+          challenges={paginatedChallenges}
+          onDelete={handleDeleteChallenge}
+        />
         {filteredChallenges.length > 0 && totalPages > 1 && (
           <div className="mt-8 flex justify-center">
             <Pagination
