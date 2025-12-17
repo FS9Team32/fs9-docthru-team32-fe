@@ -14,25 +14,25 @@ export default function FeedbackEditor({ onSubmit }) {
   };
 
   return (
-    <div className="flex felx-between">
-      <div className="relative mb-8 w-full">
+    <div className="flex justify-between items-start gap-4 mb-8">
+      <div className="relative w-full">
         <textarea
-          className="caret-transparent w-full border border-gray-200 rounded-lg p-4 text-sm focus:outline-none focus:ring-2 focus:ring-gray-200 resize-none placeholder:text-gray-400"
+          className="w-full border border-gray-200 rounded-lg p-4 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-200 resize-none placeholder:text-gray-400 bg-white"
           rows={3}
           placeholder="피드백을 남겨주세요"
           value={text}
           onChange={(e) => setText(e.target.value)}
         />
       </div>
-      <div className="flex justify-end">
+      <div className="shrink-0 mt-1">
         <Button
           variant="solid"
           size="sm"
           onClick={handleSubmit}
           disabled={!text.trim()}
-          className=" rounded-full ml-4 w-10 h-10 items-center background-gray-300 hover:bg-gray-700"
+          className="rounded-full w-10 h-10 flex items-center justify-center bg-gray-200 hover:bg-gray-800 text-gray-600 hover:text-white transition-colors"
         >
-          <ArrowDown size={24} />
+          <ArrowDown size={20} />
         </Button>
       </div>
     </div>

@@ -16,8 +16,9 @@ export default function FeedbackItem({
   const [isEditing, setIsEditing] = useState(false);
   const [editText, setEditText] = useState(feedback.content);
 
-  // 내 댓글 or 어드민 + 첼린지 마감x
-  const isMyComment = currentUser?.id === feedback.user.id;
+  const feedbackUser = feedback.user ||
+    feedback.author || { id: 0, nickname: '알 수 없음' };
+  const isMyComment = currentUser?.id === feedbackUser.id;
   const isAdmin = currentUser?.role === 'ADMIN';
   const canModify = (isMyComment || isAdmin) && !isCompleted;
 
@@ -37,85 +38,60 @@ export default function FeedbackItem({
   };
 
   return (
-    <div className="flex gap-2 w-full mb-3">
-      <div
-        className={`flex-1 flex items-start gap-3 p-4 rounded-lg transition-colors ${
-          isEditing
-            ? 'bg-white border border-gray-300'
-            : 'bg-gray-50 border border-transparent'
-        }`}
-      >
-        <div className="flex-1 min-w-0">
-          <div className="flex gap-2">
-            <div className="flex shrink-0">
-              <Image
-                src={MemberImg}
-                alt={feedback.user.nickname}
-                width={32}
-                height={32}
-                className="w-8 h-8 rounded-full object-cover"
-              />
+    <div className=" pb-4">
+      <div className="flex items-start justify-between mb-2">
+        <div className="flex items-center gap-2">
+          <Image
+            src={MemberImg}
+            alt="avatar"
+            width={32}
+            height={32}
+            className="rounded-full"
+          />
+          <div>
+            <div className="flex flex-col">
+              <span className="font-bold text-sm text-gray-900">
+                {feedback.user.nickname}
+              </span>
+              <span className="text-xs text-gray-400">
+                {feedback.createdAt}
+              </span>
             </div>
-
-            <div className="flex-1 flex justify-between items-start h-7 mb-4">
-              <div className="flex flex-col">
-                <span className="font-bold text-sm text-gray-900">
-                  {feedback.user.nickname}
-                </span>
-                <span className="text-xs text-gray-400">
-                  {feedback.createdAt}
-                </span>
-              </div>
-
-              {canModify && (
-                <div>
-                  {isEditing ? (
-                    <div className="flex items-center gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setIsEditing(false)}
-                        className="text-sm text-gray-500 hover:text-gray-700 font-medium"
-                      >
-                        취소
-                      </Button>
-                      <Button
-                        variant="solid"
-                        size="sm"
-                        onClick={handleUpdate}
-                        className="h-8 text-sm bg-black text-white hover:bg-gray-800"
-                      >
-                        수정 완료
-                      </Button>
-                    </div>
-                  ) : (
-                    <CommentDropdown
-                      onEdit={handleEditClick}
-                      onDelete={() => onDelete(feedback.id)}
-                    />
-                  )}
-                </div>
-              )}
-            </div>
+            {feedback.isEdited && (
+              <span className="text-xs text-gray-400">(수정됨)</span>
+            )}
           </div>
-
-          {isEditing ? (
-            <textarea
-              className="w-full text-sm text-gray-900 bg-transparent resize-none focus:outline-none leading-normal"
-              rows={3}
-              value={editText}
-              onChange={(e) => setEditText(e.target.value)}
-              autoFocus
-            />
-          ) : (
-            <p className="text-sm text-gray-700 leading-normal whitespace-pre-wrap break-all">
-              {feedback.content}
-            </p>
-          )}
         </div>
+
+        {canModify && (
+          <CommentDropdown
+            onEdit={handleEditClick}
+            onDelete={() => onDelete(feedback.id)}
+          />
+        )}
       </div>
 
-      <div className="w-12 shrink-0" aria-hidden="true" />
+      {isEditing ? (
+        <div className="ml-10">
+          <textarea
+            value={editText}
+            onChange={(e) => setEditText(e.target.value)}
+            className="w-full border rounded p-3 min-h-[100px] focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          {!isCompleted && (isMyComment || isAdmin) && (
+            <div className="flex gap-2 mt-2">
+              <Button onClick={handleUpdate} size="sm">
+                수정
+              </Button>
+              <Button onClick={handleCancel} variant="secondary" size="sm">
+                취소
+              </Button>
+            </div>
+          )}
+        </div>
+      ) : (
+        <p className="ml-10 text-gray-700">{feedback.content}</p>
+      )}
     </div>
   );
 }
