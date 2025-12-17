@@ -42,10 +42,8 @@ export default function WorkDetail({ params, POST_DATA }) {
   }));
 
   const [feedbacks, setFeedbacks] = useState(initialFeedbacks);
-
-  // 좋아요 상태 관리
   const [likes, setLikes] = useState(POST_DATA.likeCount ?? 0);
-  const [isLiked, setIsLiked] = useState(false);
+  const [isLiked, setIsLiked] = useState(POST_DATA.isLiked || false);
 
   const handleEditPost = () => {
     router.push(`/challenge/${id}/${workId}/editor`);
@@ -96,44 +94,23 @@ export default function WorkDetail({ params, POST_DATA }) {
 
     const prevLikes = likes;
     const prevIsLiked = isLiked;
+    const nextIsLiked = !prevIsLiked;
+    const nextLikes = prevIsLiked ? likes - 1 : likes + 1;
 
-    // 일단 추가(POST)로 시도
-    setIsLiked(true);
-    setLikes(prevLikes + 1);
+    setIsLiked(nextIsLiked);
+    setLikes(nextLikes);
 
     try {
-      const res = await toggleLikeAction(workId, false); // false = POST 요청
+      const res = await toggleLikeAction(workId, prevIsLiked);
 
       if (!res.success) {
         throw new Error(res.error);
       }
-
-      // 성공하면 추가된 상태 유지
-      setIsLiked(true);
     } catch (error) {
-      console.error('좋아요 추가 실패', error);
-
-      // 에러 발생 = 이미 좋아요를 누른 상태
-      // 삭제(DELETE)로 재시도
-      setIsLiked(false);
-      setLikes(prevLikes - 1);
-
-      try {
-        const res = await toggleLikeAction(workId, true); // true = DELETE 요청
-
-        if (!res.success) {
-          throw new Error(res.error);
-        }
-
-        // 삭제 성공
-        setIsLiked(false);
-      } catch (deleteError) {
-        console.error('좋아요 삭제도 실패', deleteError);
-        // 삭제도 실패하면 원래 상태로 복구
-        setIsLiked(prevIsLiked);
-        setLikes(prevLikes);
-        alert('좋아요 처리에 실패했습니다.');
-      }
+      console.error('좋아요 실패', error);
+      setIsLiked(prevIsLiked);
+      setLikes(prevLikes);
+      alert('좋아요 처리에 실패했습니다.');
     }
   };
 
