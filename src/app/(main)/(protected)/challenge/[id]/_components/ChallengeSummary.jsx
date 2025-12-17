@@ -90,7 +90,7 @@ export default function ChallengeSummary({ challenge, isFull }) {
             className="object-cover"
           />
         </div>
-        <span className="author-name text-sm font-bold text-gray-700">
+        <span className=" text-xs font-medium text-gray-800">
           {creator?.nickname || '작성자'}
         </span>
       </div>

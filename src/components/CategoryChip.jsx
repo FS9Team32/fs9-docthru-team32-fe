@@ -2,7 +2,7 @@ import { cn } from '@/lib/util';
 
 export default function CategoryChip({ children, className: cls, ...props }) {
   const className = cn(
-    'bg-white block border-none rounded-[26px] items-center justify-center w-auto leading-6.5 py-1.5 px-9',
+    'bg-white block rounded-lg items-center justify-center w-auto leading-6.5  h-10 px-2.5 py-0.5 text-gray-700 font-medium border',
     cls,
   );
   return (
