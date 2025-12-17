@@ -11,7 +11,7 @@ import { useAuth } from '@/providers/AuthProvider';
 export default function SignupPage() {
   const router = useRouter();
   const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const { login } = useAuth();
+  const { signup } = useAuth();
 
   const handleSignup = async ({
     nickname,
@@ -24,7 +24,7 @@ export default function SignupPage() {
     }
 
     try {
-      await login(nickname, email, password, confirmPassword);
+      await signup(nickname, email, password, confirmPassword);
 
       setIsPopupOpen(true);
       return { success: true };
