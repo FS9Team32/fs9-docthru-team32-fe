@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import timeIcon from '@/assets/time.svg';
 import personIcon from '@/assets/person.svg';
 
@@ -13,14 +14,17 @@ const formatDeadline = (dateString) => {
 };
 
 export default function ActionCard({
+  id,
   status,
   deadline,
   currentParticipants = 0,
   maxParticipants,
   originalLink,
   isFull,
+
   isParticipating,
 }) {
+  const router = useRouter();
   const isClosed = status === 'CLOSED';
 
   const getButtonState = () => {
@@ -37,42 +41,44 @@ export default function ActionCard({
   };
 
   const handleAction = () => {
-    alert('챌린지 액션 버튼 클릭!');
+    router.push(`/challenge/${id}/editor`);
   };
 
   return (
-    <div className="rounded-2xl border-2 border-gray-100 bg-white p-5">
+    <div className="rounded-2xl border-2  w-[285px] h-[174px] border-gray-100 bg-white p-5">
       <div className="mb-6 flex flex-row items-center justify-center gap-6">
         <div className="flex items-center gap-1.5 text-[13px] font-normal text-gray-500">
           <Image src={timeIcon} alt="마감일" width={24} height={24} />
+
           <span className="shrink-0">{formatDeadline(deadline)}</span>
         </div>
 
         <div className="flex items-center gap-1.5 text-sm font-normal text-gray-600">
           <Image src={personIcon} alt="참여 인원" width={24} height={24} />
+
           <span className="shrink-0">
             <span
               className={`font-normal ${isFull ? 'font-bold text-orange-500' : 'text-gray-600'}`}
             >
               {currentParticipants}
             </span>
+
             {maxParticipants ? `/${maxParticipants}` : ''}
           </span>
         </div>
       </div>
 
-      <div className="space-y-3">
+      <div className="space-y-3 flex flex-col items-center">
         <button
           onClick={handleViewOriginal}
-          className="w-full rounded-xl border-2 bg-yellow-400 py-3 text-sm font-bold text-black transition hover:bg-yellow-500"
+          className=" rounded-xl w-[253px] h-10 border-2 bg-yellow-400 text-sm font-bold text-black "
         >
           원문 보기
         </button>
-
         <button
           disabled={isDisabled}
           onClick={isDisabled ? undefined : handleAction}
-          className={`w-full rounded-xl py-3 text-sm font-bold transition ${
+          className={` rounded-xl  w-[253px] h-10 text-sm font-bold transition ${
             isDisabled
               ? 'cursor-not-allowed bg-gray-200 text-gray-500'
               : 'bg-gray-900 text-white hover:bg-gray-800'
