@@ -49,24 +49,13 @@ const formatDeadline = (dateString) => {
     : `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일 마감`;
 };
 
-const getStatusLabel = (mode, status) => {
-  if (mode === 'ADMIN') {
-    if (status === 'REJECTED') return '신청이 거절된 챌린지입니다.';
-    if (status === 'APPROVED') return '신청이 승인된 챌린지입니다.';
-  }
-  if (mode === 'USER') {
-    const map = {
-      DELETED: '삭제된 챌린지입니다',
-      PENDING: '승인 대기 중입니다.',
-      REJECTED: '신청이 거절되었습니다',
-      APPROVED: '신청이 승인되었습니다',
-    };
-    return map[status] || null;
-  }
-  return null;
-};
-
-export default function ChallengeDetailView({ data, mode = 'USER' }) {
+export default function ChallengeDetailView({
+  data,
+  mode = 'USER',
+  onUpdateStatus,
+  prevId,
+  nextId,
+}) {
   const router = useRouter();
   const params = useParams();
 
@@ -82,10 +71,7 @@ export default function ChallengeDetailView({ data, mode = 'USER' }) {
   if (!data)
     return <div className="p-20 text-center text-gray-500">데이터 없음</div>;
 
-  const rawId = params?.id || data?.id;
-  const currentId = Number(rawId);
-  const prevId = currentId > 1 ? currentId - 1 : 1;
-  const nextId = currentId + 1;
+  const currentDisplayId = data?.id;
 
   const {
     title,
@@ -105,6 +91,7 @@ export default function ChallengeDetailView({ data, mode = 'USER' }) {
     setViewFeedback(feedback);
     setViewUpdatedAt(new Date().toISOString());
   };
+
   const handleConfirmCancel = async () => {
     try {
       const applicationId = data?.applicationId || data?.id;
@@ -156,23 +143,29 @@ export default function ChallengeDetailView({ data, mode = 'USER' }) {
       {mode === 'ADMIN' && (
         <div className="mb-6 flex w-full items-center justify-between">
           <span className="text-[16px] font-medium text-gray-800">
-            No. {currentId}
+            No. {currentDisplayId}
           </span>
           <div className="flex items-center gap-2">
             <Link
-              href={`/challenge/${prevId}`}
+              href={prevId ? `/challenge/${prevId}` : '#'}
               className={`flex h-8 w-8 items-center justify-center rounded-full transition ${
-                currentId <= 1
-                  ? 'cursor-not-allowed opacity-30'
+                !prevId
+                  ? 'cursor-not-allowed opacity-30 pointer-events-none'
                   : 'hover:bg-gray-100'
               }`}
-              onClick={(e) => currentId <= 1 && e.preventDefault()}
+              aria-disabled={!prevId}
             >
               <Image src={IconArrowLeft} alt="이전" width={24} height={24} />
             </Link>
+
             <Link
-              href={`/challenge/${nextId}`}
-              className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-gray-100 transition"
+              href={nextId ? `/challenge/${nextId}` : '#'}
+              className={`flex h-8 w-8 items-center justify-center rounded-full transition ${
+                !nextId
+                  ? 'cursor-not-allowed opacity-30 pointer-events-none'
+                  : 'hover:bg-gray-100'
+              }`}
+              aria-disabled={!nextId}
             >
               <Image src={IconArrowRight} alt="다음" width={24} height={24} />
             </Link>
@@ -188,7 +181,7 @@ export default function ChallengeDetailView({ data, mode = 'USER' }) {
           status={viewStatus}
           message={viewFeedback}
           date={viewUpdatedAt}
-          isAdmin={true}
+          isAdmin={mode === 'ADMIN'}
         />
       </div>
 
