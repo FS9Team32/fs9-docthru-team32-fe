@@ -2,9 +2,34 @@ import { cookies } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import ChallengeDetailView from '@/components/ChallengeDetailView';
-
+import BackButton from '@/components/BackButton';
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
+async function createChallenge(applicationId) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get('accessToken')?.value;
+
+  const apiUrl = `${BASE_URL}/challenges`;
+
+  console.log('Body:', JSON.stringify({ applicationId }));
+  const res = await fetch(apiUrl, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token && { Authorization: `Bearer ${token}` }),
+    },
+
+    body: JSON.stringify({
+      applicationId: applicationId,
+    }),
+  });
+  if (!res.ok) {
+    const errorData = await res.json();
+    throw new Error(errorData.message || '챌린지 승인(생성) 실패');
+  }
+
+  return await res.json();
+}
 async function getUserRole(token) {
   if (!token) return 'USER';
   try {
@@ -117,9 +142,10 @@ export default async function AdminApplyPage({ params }) {
   if (!data) {
     return (
       <div className="p-10 text-center">
-        <h2 className="text-xl font-semibold mb-2">
+        <h2 className="text-xl font-semibold mb-10">
           존재하지 않거나 삭제된 신청서입니다.
         </h2>
+        <BackButton />
       </div>
     );
   }
@@ -137,7 +163,12 @@ export default async function AdminApplyPage({ params }) {
   async function handleStatusUpdate(status, reason) {
     'use server';
     try {
-      await updateApplicationStatus(id, status, reason);
+      if (status === 'ACCEPTED') {
+        await createChallenge(id);
+      } else {
+        await updateApplicationStatus(id, status, reason);
+      }
+
       revalidatePath(`/admin/apply/${id}`);
     } catch (error) {
       console.error(error);
